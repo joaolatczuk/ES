@@ -1,0 +1,17 @@
+# Ignorar pastas do sistema
+node_modules/
+vendor/
+.env
+.DS_Store
+
+frotend/package.json
+frotend/package-lock.json
+
+# Ignorar arquivos temporários e do editor
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Ignorar pastas do VS Code
+.vscode/
