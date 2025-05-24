@@ -28,18 +28,18 @@ function Login() {
 
       if (resposta.data.success) {
         const { id, nome, tipo } = resposta.data.usuario;
-      
+
         localStorage.setItem('usuarioLogado', 'true');
         localStorage.setItem('user', JSON.stringify({
           id,
           nome,
           role: tipo
         }));
-      
+
         setMensagem('Login realizado com sucesso!');
         navigate('/home');
       }
-       else {
+      else {
         setMensagem('Email ou senha incorretos.');
       }
     } catch (erro) {
@@ -67,20 +67,22 @@ function Login() {
           placeholder="Digite seu e-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="input-verde"
           required
         />
 
-        <label htmlFor="senha">Senha:</label>
         <input
           type="password"
           id="senha"
           placeholder="Digite sua senha"
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
+          className="input-verde"
           required
         />
 
-        <button type="submit">Fazer login</button>
+        <button type="submit" className="input-verde">Fazer login</button>
+
       </form>
 
       {mensagem && <p className="mensagem">{mensagem}</p>}

@@ -149,10 +149,6 @@ function Conteudo() {
           </button>
         )}
 
-        <button onClick={() => { setFiltro('favoritas'); setMostrarFormulario(false); }}>
-          <img src="/star.png" alt="Favoritas" />
-          <span>Favoritas</span>
-        </button>
         <button onClick={() => { setFiltro('publicadas'); setMostrarFormulario(false); }}>
           <img src="/cook-book.png" alt="Publicadas" />
           <span>Publicadas</span>

@@ -73,16 +73,6 @@ function ReceitaDetalhe() {
         />
       )}
 
-      {/* Estrela de favorito no canto inferior direito */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-        <img
-          src={favorito ? "/star.png" : "/no-star.png"}
-          alt="Favorito"
-          style={{ width: '32px', height: '32px', cursor: 'pointer' }}
-          onClick={toggleFavorito}
-        />
-      </div>
-
       <div className="receita-info">
         <p><strong>🌿 Categoria:</strong> {receita.categoria}</p>
         <p><strong>🗓️ Época:</strong> {receita.epoca}</p>
