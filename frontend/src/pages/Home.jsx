@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './style.css';
-import Topo from './Topo';
+import '../styles/style.css';
+import Topo from '../components/Topo';
 
 function Home() {
   const [menuAberto, setMenuAberto] = useState(false);

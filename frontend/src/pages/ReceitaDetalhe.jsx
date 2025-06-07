@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Topo from './Topo';
-import './style.css';
+import Topo from '../components/Topo';
+import '../styles/style.css';
+import '../styles/style.css';
 
 function ReceitaDetalhe() {
   const { id } = useParams();

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './style.css';
-import Topo from './Topo';
+import '../styles/style.css';
+import Topo from '../components/Topo';
 
 function Moderacao() {
   const [pendentes, setPendentes] = useState([]);

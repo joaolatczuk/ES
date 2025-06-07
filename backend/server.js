@@ -7,6 +7,7 @@ require('dotenv').config();
 const userRoutes = require('./routes/userRoutes');
 const notificacaoRoutes = require('./routes/notificacaoRoutes');
 const conteudoRoutes = require('./routes/conteudoRoutes');
+const opcoesRoutes = require('./routes/opcoesRoutes');
 
 // 👇 Habilita CORS antes de tudo
 app.use(cors({
@@ -31,8 +32,11 @@ app.use('/api/conteudos', conteudoRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notificacoes', notificacaoRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // imagens públicas
+app.use('/api', opcoesRoutes);
 
 // Start do servidor
 app.listen(process.env.PORT, () => {
+  console.clear()
   console.log(`Servidor rodando na porta ${process.env.PORT}`);
 });
+
