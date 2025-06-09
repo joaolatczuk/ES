@@ -20,6 +20,7 @@ body {
   border-radius: 12px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
 }
+
 .logo {
   width: 80px;
   margin-top: 10px;
@@ -132,7 +133,7 @@ button:hover {
   border-radius: 12px;
   text-decoration: none;
   width: 180px;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
   transition: transform 0.2s ease;
 }
 
@@ -265,7 +266,8 @@ button:hover {
 .notificacao-img {
   width: 35px;
   cursor: pointer;
-  margin-top: -30px; /* sobe levemente o ícone */
+  margin-top: -30px;
+  /* sobe levemente o ícone */
 }
 
 .notificacao-img {
@@ -352,16 +354,16 @@ button:hover {
 
 .receita-lista {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 }
 
 .receita-card {
   background-color: #d6f0c4;
   padding: 16px;
   border-radius: 12px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
 }
 
 .receita-card {
@@ -467,7 +469,8 @@ input[type="number"] {
   border-radius: 8px;
   background-color: #d6f0c4;
   overflow: hidden;
-  height: 45px; /* altura consistente */
+  height: 45px;
+  /* altura consistente */
 }
 
 .input-numero-custom {
@@ -606,7 +609,10 @@ input[type="number"] {
 
 .botoes-aprovacao {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 2rem;
+  flex-wrap: wrap;
 }
 
 .btn-aprovar {
@@ -743,42 +749,93 @@ input[type="file"]::file-selector-button:hover {
   margin-bottom: 30px;
 }
 
+
 .receita-card.simples {
-  text-align: center;
+  background-color: #f9f9f9;
   border: 1px solid #ccc;
   border-radius: 10px;
-  padding: 10px;
-  max-width: 250px;
-  margin: 10px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  padding: 15px;
+  width: 250px;
+  min-height: 370px;
+  /* define uma altura mínima para alinhamento */
+  text-align: center;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
 }
 
+/* Imagem da receita */
 .receita-imagem {
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
   border-radius: 8px;
   margin-bottom: 10px;
+}
+
+/* Nome da planta */
+.receita-card.simples h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2d6a4f;
+}
+
+/* Texto de status */
+.aguardando {
+  font-style: italic;
+  color: #888;
+  margin: auto;
+}
+
+
+.btn-acao {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  min-width: 100px;
+  text-align: center;
+  transition: background-color 0.2s ease;
+  font-weight: bold;
 }
 
 .btn-ver {
   background-color: #2d6a4f;
   color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
 }
 
 .btn-ver:hover {
   background-color: #1b4332;
 }
 
+/* Botão EXCLUIR - vermelho */
+.btn-excluir {
+  background-color: #c0392b;
+  color: white;
+}
+
+.btn-excluir:hover {
+  background-color: #922b21;
+}
+
+/* Container opcional para alinhamento dos botões */
+.botoes-receita {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
 .receita-detalhe-container {
   padding: 2rem;
   max-width: 900px;
   margin: auto;
-  font-size: 1.25rem; /* texto maior */
+  font-size: 1.25rem;
+  /* texto maior */
   color: #333;
 }
 
@@ -812,6 +869,23 @@ input[type="file"]::file-selector-button:hover {
   margin-bottom: 1.5rem;
 }
 
+.btn-voltar-especial {
+  background-color: ##2d6a4f;
+  color: white;
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.texto-aprovado {
+  font-style: italic;
+  font-weight: bold;
+  text-align: center;
+  margin: auto;
+}
+
 .estrela-favorito {
   position: fixed;
   bottom: 20px;
@@ -825,7 +899,10 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .aguardando {
-  font-style: italic;
+  margin-top: auto;
   color: #888;
-  margin-top: 5px;
+  font-style: italic;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 6px;
 }

@@ -96,6 +96,24 @@ router.put('/:id/excluir', async (req, res) => {
   }
 });
 
+
+router.put('/:id/status', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!status || !['aprovado', 'rejeitado'].includes(status)) {
+    return res.status(400).json({ success: false, error: 'Status inválido' });
+  }
+
+  try {
+    await db.query('UPDATE conteudos SET status = ? WHERE id = ?', [status, id]);
+    res.status(200).json({ success: true });
+  } catch (err) {
+    console.error('Erro ao atualizar status:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // 🔍 Buscar receita por ID
 router.get('/:id', async (req, res) => {
   const { id } = req.params;

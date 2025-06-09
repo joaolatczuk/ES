@@ -3,12 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/style.css';
-import Topo from '../components/Topo';
-import FormularioReceita from '../components/FormularioReceita';
-import Publicadas from '../components/Publicadas';
-import Enviadas from '../components/Enviadas';
-import Moderacao from '../components/Moderacao';
-import Favoritas from '../components/Favoritas';
+import Topo from '../components/Topo.jsx';
+import FormularioReceita from '../components/FormularioReceita.jsx';
+import Publicadas from '../components/Publicadas.jsx';
+import Enviadas from '../components/Enviadas.jsx';
+import Moderacao from '../components/Moderacao.jsx';
+import Favoritas from '../components/Favoritas.jsx';
 
 function Conteudo() {
   const navigate = useNavigate();

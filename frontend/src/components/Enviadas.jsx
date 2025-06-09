@@ -8,7 +8,7 @@ function Enviadas({ receitas, idUsuario }) {
   const excluirReceita = async (id) => {
     try {
       await axios.put(`http://localhost:5000/api/conteudos/${id}/excluir`);
-      window.location.reload(); // Recarrega a lista
+      window.location.reload();
     } catch (err) {
       console.error('Erro ao excluir receita:', err);
     }
@@ -35,13 +35,33 @@ function Enviadas({ receitas, idUsuario }) {
             {r.status === 'pendente' && (
               <>
                 <p className="aguardando">⏳ Aguardando moderação</p>
-                <button className="btn-excluir" onClick={() => excluirReceita(r.id || r.id_conteudo)}>Excluir</button>
+                <div className="botoes-receita">
+                  <button
+                    className="btn-acao btn-excluir"
+                    onClick={() => excluirReceita(r.id || r.id_conteudo)}
+                  >
+                    Excluir
+                  </button>
+                </div>
               </>
             )}
             {r.status === 'aprovado' && (
               <>
-                <button className="btn-ver" onClick={() => navigate(`/receita/${r.id || r.id_conteudo}`)}>Ver</button>
-                <button className="btn-excluir" onClick={() => excluirReceita(r.id || r.id_conteudo)}>Excluir</button>
+                <p className="texto-aprovado">✅ <em>Aprovado</em></p>
+                <div className="botoes-receita">
+                  <button
+                    className="btn-acao btn-ver"
+                    onClick={() => navigate(`/receita/${r.id || r.id_conteudo}`)}
+                  >
+                    Ver
+                  </button>
+                  <button
+                    className="btn-acao btn-excluir"
+                    onClick={() => excluirReceita(r.id || r.id_conteudo)}
+                  >
+                    Excluir
+                  </button>
+                </div>
               </>
             )}
           </div>

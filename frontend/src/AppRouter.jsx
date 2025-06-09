@@ -7,9 +7,8 @@ import Forum from './pages/Forum';
 import Calendario from './pages/Calendario';
 import Conteudo from './pages/Conteudo';
 import PrivateRoute from './components/PrivateRoute';
-import Moderacao from './pages/Moderacao';
 import ReceitaDetalhe from './pages/ReceitaDetalhe';
-
+import Moderacao from './components/Moderacao';
 
 function AppRouter() {
   return (
@@ -31,11 +30,11 @@ function AppRouter() {
         <Route path="/conteudo" element={
           <PrivateRoute><Conteudo /></PrivateRoute>
         } />
-        <Route path="/moderacao" element={
-          <PrivateRoute><Moderacao /></PrivateRoute>
-        } />
         <Route path="/receita/:id" element={
           <PrivateRoute><ReceitaDetalhe /></PrivateRoute>
+        } />
+        <Route path="/moderacao" element={
+          <PrivateRoute><Moderacao /></PrivateRoute>
         } />
       </Routes>
     </BrowserRouter>
