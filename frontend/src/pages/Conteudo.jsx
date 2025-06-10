@@ -50,9 +50,9 @@ function Conteudo() {
       try {
         const [cat, ep, so, sol] = await Promise.all([
           axios.get('http://localhost:5000/api/conteudocategoria'),
-          axios.get('http://localhost:5000/api/categoriaepoca'),
-          axios.get('http://localhost:5000/api/categoriasolo'),
-          axios.get('http://localhost:5000/api/categoriasol')
+          axios.get('http://localhost:5000/api/conteudoepoca'),
+          axios.get('http://localhost:5000/api/conteudosolo'),
+          axios.get('http://localhost:5000/api/conteudosol')
         ]);
         setCategorias(cat.data);
         setEpocas(ep.data);

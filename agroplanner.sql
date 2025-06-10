@@ -19,15 +19,15 @@
 CREATE DATABASE IF NOT EXISTS `agroplanner` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
 USE `agroplanner`;
 
--- Copiando estrutura para tabela agroplanner.categoriaepoca
-CREATE TABLE IF NOT EXISTS `categoriaepoca` (
+-- Copiando estrutura para tabela agroplanner.conteudoepoca
+CREATE TABLE IF NOT EXISTS `conteudoepoca` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela agroplanner.categoriaepoca: ~7 rows (aproximadamente)
-INSERT INTO `categoriaepoca` (`id`, `nome`) VALUES
+-- Copiando dados para a tabela agroplanner.conteudoepoca: ~7 rows (aproximadamente)
+INSERT INTO `conteudoepoca` (`id`, `nome`) VALUES
 	(1, 'Primavera'),
 	(2, 'Verão'),
 	(3, 'Outono'),
@@ -36,15 +36,15 @@ INSERT INTO `categoriaepoca` (`id`, `nome`) VALUES
 	(6, 'Estação seca'),
 	(7, 'Estação chuvosa');
 
--- Copiando estrutura para tabela agroplanner.categoriasol
-CREATE TABLE IF NOT EXISTS `categoriasol` (
+-- Copiando estrutura para tabela agroplanner.conteudosol
+CREATE TABLE IF NOT EXISTS `conteudosol` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela agroplanner.categoriasol: ~6 rows (aproximadamente)
-INSERT INTO `categoriasol` (`id`, `nome`) VALUES
+-- Copiando dados para a tabela agroplanner.conteudosol: ~6 rows (aproximadamente)
+INSERT INTO `conteudosol` (`id`, `nome`) VALUES
 	(1, 'Pleno sol – mínimo de 4h de sol direto'),
 	(2, 'Meia sombra – algumas horas com luz direta'),
 	(3, 'Sombra – luz indireta, sem sol direto'),
@@ -52,15 +52,15 @@ INSERT INTO `categoriasol` (`id`, `nome`) VALUES
 	(5, 'Sol da manhã e sombra à tarde'),
 	(6, 'Sombra total – ambiente interno');
 
--- Copiando estrutura para tabela agroplanner.categoriasolo
-CREATE TABLE IF NOT EXISTS `categoriasolo` (
+-- Copiando estrutura para tabela agroplanner.conteudosolo
+CREATE TABLE IF NOT EXISTS `conteudosolo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela agroplanner.categoriasolo: ~8 rows (aproximadamente)
-INSERT INTO `categoriasolo` (`id`, `nome`) VALUES
+-- Copiando dados para a tabela agroplanner.conteudosolo: ~8 rows (aproximadamente)
+INSERT INTO `conteudosolo` (`id`, `nome`) VALUES
 	(1, 'Arenoso'),
 	(2, 'Argiloso'),
 	(3, 'Siltoso'),

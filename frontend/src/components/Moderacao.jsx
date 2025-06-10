@@ -1,59 +1,71 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-function ReceitaDetalhe() {
-  const { id } = useParams();
+function Moderacao() {
+  const [receitas, setReceitas] = useState([]);
   const navigate = useNavigate();
-  const [receita, setReceita] = useState(null);
-  const user = JSON.parse(localStorage.getItem('user'));
-  const isModerador = user?.role === 'admin'; // ou 'moderador'
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/conteudos/${id}`)
-      .then(res => setReceita(res.data))
-      .catch(err => console.error(err));
-  }, [id]);
+    axios.get('http://localhost:5000/api/conteudos/pendentes')
+      .then(res => setReceitas(res.data))
+      .catch(err => console.error('Erro ao buscar receitas pendentes:', err));
+  }, []);
 
-  const atualizarStatus = async (status) => {
+  const atualizarStatus = async (id, status) => {
     try {
       await axios.put(`http://localhost:5000/api/conteudos/${id}/status`, { status });
-      navigate('/moderacao'); // voltar para moderação após ação
+      navigate('/conteudo'); // redireciona após ação
     } catch (err) {
       console.error('Erro ao atualizar status:', err);
     }
   };
 
-  if (!receita) return <p>Carregando...</p>;
+  const excluirReceita = async (id) => {
+    try {
+      await axios.put(`http://localhost:5000/api/conteudos/${id}/excluir`);
+      navigate('/conteudo'); // redireciona após exclusão
+    } catch (err) {
+      console.error('Erro ao excluir receita:', err);
+    }
+  };
 
   return (
-    <div className="receita-detalhe-container">
-      <h2 className="receita-titulo">{receita.nomePlanta}</h2>
-      <img
-        className="receita-imagem-grande"
-        src={`http://localhost:5000${receita.imagens?.[0] || '/uploads/no-image.png'}`}
-        alt={receita.nomePlanta}
-      />
-      <div className="receita-info">
-        <p><strong>Categoria:</strong> {receita.categoria}</p>
-        <p><strong>Época:</strong> {receita.epoca}</p>
-        <p><strong>Solo:</strong> {receita.solo}</p>
-        <p><strong>Rega:</strong> {receita.rega}</p>
-        <p><strong>Sol:</strong> {receita.sol}</p>
-        <p><strong>Instruções:</strong> {receita.instrucoes}</p>
-      </div>
+    <div className="moderacao-container">
+      <h2>📋 Receitas pendentes de moderação</h2>
+      <div className="receita-lista">
+        {receitas.length === 0 ? (
+          <p>Nenhuma receita pendente.</p>
+        ) : (
+          receitas.map((r) => {
+            const idReceita = r.id || r.id_conteudo;
+            return (
+              <div key={idReceita} className="receita-card">
+                <img
+                  src={`http://localhost:5000${r.imagens?.[0] || '/uploads/no-image.png'}`}
+                  alt={r.nomePlanta}
+                  className="receita-imagem"
+                />
+                <h3>{r.nomePlanta}</h3>
+                <p style={{ fontStyle: 'italic' }}>👤 {r.autor || 'Anônimo'}</p>
 
-      <div className="botoes-aprovacao">
-        <button className="btn-voltar" onClick={() => navigate(-1)}>Voltar</button>
-        {isModerador && (
-          <>
-            <button className="btn-aprovar" onClick={() => atualizarStatus('aprovado')}>Aprovar</button>
-            <button className="btn-rejeitar" onClick={() => atualizarStatus('rejeitado')}>Rejeitar</button>
-          </>
+                <div className="status-info">
+                  <span style={{ color: '#999' }}>⏳ Aguardando moderação</span>
+                </div>
+
+                <div className="botoes-acao">
+                  <button className="btn-verde" onClick={() => navigate(`/receita/${idReceita}`)}>Ver</button>
+                  <button className="btn-verde" onClick={() => atualizarStatus(idReceita, 'aprovado')}>Aprovar</button>
+                  <button className="btn-cinza" onClick={() => atualizarStatus(idReceita, 'rejeitado')}>Rejeitar</button>
+                  <button className="btn-vermelho" onClick={() => excluirReceita(idReceita)}>Excluir</button>
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
     </div>
   );
 }
 
-export default ReceitaDetalhe;
+export default Moderacao;

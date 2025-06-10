@@ -11,33 +11,35 @@ router.get('/conteudocategoria', async (req, res) => {
   }
 });
 
-router.get('/categoriaepoca', async (req, res) => {
+router.get('/conteudoepoca', async (req, res) => {
   try {
-    const dados = await db.select_all('categoriaepoca');
+    const dados = await db.select_all('conteudoepoca');
     res.json(dados);
   } catch (err) {
     res.status(500).json({ erro: 'Erro ao buscar épocas' });
   }
 });
 
-router.get('/categoriasolo', async (req, res) => {
+router.get('/conteudosolo', async (req, res) => {
   try {
-    const dados = await db.select_all('categoriasolo');
+    const dados = await db.select_all('conteudosolo'); // Corrigido
     res.json(dados);
   } catch (err) {
+    console.error('❌ Erro em /conteudosolo:', err);
     res.status(500).json({ erro: 'Erro ao buscar tipos de solo' });
   }
 });
 
-router.get('/categoriasol', async (req, res) => {
+router.get('/conteudosol', async (req, res) => {
   try {
-    const dados = await db.select_all('categoriasol'); // ← deve estar assim
+    const dados = await db.select_all('conteudosol'); // Corrigido
     res.json(dados);
   } catch (err) {
-    console.error('❌ Erro em /categoriasol:', err); // 👈 Adicione isso
+    console.error('❌ Erro em /conteudosol:', err);
     res.status(500).json({ erro: 'Erro ao buscar exposição ao sol' });
   }
 });
+
 
 
 module.exports = router;

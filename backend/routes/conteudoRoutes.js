@@ -15,21 +15,21 @@ const upload = multer({ storage });
 router.post('/', upload.array('imagens'), async (req, res) => {
   try {
     const {
-      nomePlanta, categoria, epoca, temperatura,
-      solo, rega, sol, instrucoes, id_autor
+      nomePlanta, id_categoria, id_epoca, temperatura,
+      id_solo, rega, id_sol, instrucoes, id_autor
     } = req.body;
     const data_publicacao = new Date();
 
     const sql = `
       INSERT INTO conteudos (
-        nomePlanta, categoria, epoca, temperatura, solo, rega, sol, instrucoes,
-        id_autor, data_publicacao, status, favorita, statusAtivo
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendente', false, 1)
+        nomePlanta, id_categoria, id_epoca, temperatura, id_solo, rega, id_sol, instrucoes,
+        id_autor, data_publicacao, status, statusAtivo
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendente', 1)
     `;
 
     const valores = [
-      nomePlanta, categoria, epoca, temperatura,
-      solo, rega, sol, instrucoes, id_autor, data_publicacao
+      nomePlanta, id_categoria, id_epoca, temperatura,
+      id_solo, rega, id_sol, instrucoes, id_autor, data_publicacao
     ];
     
     const [insertResult] = await db.query(sql, valores);
@@ -96,7 +96,7 @@ router.put('/:id/excluir', async (req, res) => {
   }
 });
 
-
+// 🔸 Atualizar status da receita (aprovado ou rejeitado)
 router.put('/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -114,15 +114,26 @@ router.put('/:id/status', async (req, res) => {
   }
 });
 
-// 🔍 Buscar receita por ID
+// 🔍 Buscar receita por ID com joins nos nomes das FK
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const [results] = await db.query(`
-      SELECT c.*, u.nome AS autor, GROUP_CONCAT(i.url) AS imagens
+      SELECT 
+        c.*,
+        u.nome AS autor,
+        cat.nome AS categoria,
+        ep.nome AS epoca,
+        solo.nome AS solo,
+        sol.nome AS sol,
+        GROUP_CONCAT(i.url) AS imagens
       FROM conteudos c
-      LEFT JOIN imagens_conteudo i ON c.id = i.id_conteudo
       LEFT JOIN usuarios u ON c.id_autor = u.id
+      LEFT JOIN conteudocategoria cat ON c.id_categoria = cat.id
+      LEFT JOIN conteudoepoca ep ON c.id_epoca = ep.id
+      LEFT JOIN conteudosolo solo ON c.id_solo = solo.id
+      LEFT JOIN conteudosol sol ON c.id_sol = sol.id
+      LEFT JOIN imagens_conteudo i ON c.id = i.id_conteudo
       WHERE c.id = ?
       GROUP BY c.id
     `, [id]);

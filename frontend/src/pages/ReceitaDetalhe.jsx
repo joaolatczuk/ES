@@ -9,36 +9,16 @@ function ReceitaDetalhe() {
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
   const [receita, setReceita] = useState(null);
-  const [favorito, setFavorito] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user'));
   const idUsuario = user?.id;
-  const isModerador = user?.role === 'admin'; // ou outro tipo que indique moderação
+  const isModerador = user?.role === 'admin';
 
   useEffect(() => {
     axios.get(`http://localhost:5000/api/conteudos/${id}`)
       .then(res => setReceita(res.data))
       .catch(err => console.error('Erro ao buscar receita:', err));
   }, [id]);
-
-  useEffect(() => {
-    if (!idUsuario) return;
-    axios.get(`http://localhost:5000/api/favoritos/${idUsuario}`)
-      .then(res => {
-        const favoritosIds = res.data.map(f => f.id_conteudo);
-        setFavorito(favoritosIds.includes(Number(id)));
-      })
-      .catch(err => console.error('Erro ao verificar favorito:', err));
-  }, [id, idUsuario]);
-
-  const toggleFavorito = () => {
-    const url = `http://localhost:5000/api/favoritos/${idUsuario}/${id}`;
-    if (favorito) {
-      axios.delete(url).then(() => setFavorito(false));
-    } else {
-      axios.post(url).then(() => setFavorito(true));
-    }
-  };
 
   const atualizarStatus = async (status) => {
     try {
@@ -63,7 +43,11 @@ function ReceitaDetalhe() {
         </div>
       )}
 
-      <h1 className="receita-titulo">🌿 {receita.nomePlanta}</h1>
+      <div style={{ marginTop: '0px' }}>
+        <h1 className="receita-titulo" style={{ marginTop: '20px' }}>
+          🌿 {receita.nomePlanta}
+        </h1>
+      </div>
 
       {receita.imagens?.length > 0 ? (
         <img
@@ -80,17 +64,71 @@ function ReceitaDetalhe() {
       )}
 
       <div className="receita-info">
-        <p><strong>👤 Autor:</strong> {receita.autor || 'Anônimo'}</p>
-        <p><strong>📅 Publicada em:</strong> {dataFormatada}</p>
-        <hr />
-        <p><strong>🗂️ Categoria:</strong> {receita.categoria}</p>
-        <p><strong>🗓️ Época de plantio:</strong> {receita.epoca}</p>
-        <p><strong>🌡️ Temperatura ideal:</strong> {receita.temperatura}°C</p>
-        <p><strong>🌱 Solo:</strong> {receita.solo}</p>
-        <p><strong>💧 Frequência de rega:</strong> {receita.rega}</p>
-        <p><strong>☀️ Exposição ao sol:</strong> {receita.sol}</p>
-        <p><strong>📋 Instruções detalhadas:</strong></p>
-        <div style={{ backgroundColor: '#f1f1f1', padding: '1rem', borderRadius: '10px' }}>
+        <table>
+          <tbody>
+            <tr>
+              <td><img src="/user.png" alt="Autor" width="30" /></td>
+              <td><strong>Autor:</strong> {receita.autor || 'Anônimo'}</td>
+            </tr>
+            <tr>
+              <td>📅</td>
+              <td><strong>Publicada em:</strong> {dataFormatada}</td>
+            </tr>
+            <tr>
+              <td colSpan={2}>
+                <hr style={{ width: '100%', borderTop: '2px solid #2d6a4f' }} />
+              </td>
+            </tr>
+
+            <tr>
+              <td><img src={`/categoria/${receita.id_categoria}.png`} alt="Categoria" width="30" /></td>
+              <td><strong>Categoria:</strong> {receita.categoria}</td>
+            </tr>
+            <tr>
+              <td><img src={`/estacao/${receita.id_epoca}.png`} alt="Época" width="30" /></td>
+              <td><strong>Época de plantio:</strong> {receita.epoca}</td>
+            </tr>
+            <tr>
+              <td>
+                <img
+                  src={Number(receita.temperatura) < 20 ? '/frio.png' : '/quente.png'}
+                  alt="Temperatura"
+                  width="30"
+                />
+              </td>
+              <td><strong>Temperatura ideal:</strong> {receita.temperatura}°C</td>
+            </tr>
+            <tr>
+              <td><img src={`/solo/${receita.id_solo}.png`} alt="Solo" width="30" /></td>
+              <td><strong>Solo:</strong> {receita.solo}</td>
+            </tr>
+            <tr>
+              <td>
+                <img
+                  src={
+                    receita.rega?.toLowerCase().includes('dia') ? '/gota/3.png' :
+                      receita.rega?.toLowerCase().includes('semana') ? '/gota/2.png' :
+                        receita.rega?.toLowerCase().includes('mês') || receita.rega?.toLowerCase().includes('mes') ? '/gota/1.png' :
+                          '/gota/1.png'
+                  }
+                  alt="Frequência de rega"
+                  width="30"
+                />
+              </td>
+              <td><strong>Frequência de rega:</strong> {receita.rega}</td>
+            </tr>
+            <tr>
+              <td><img src={`/sol/${receita.id_sol}.png`} alt="Sol" width="30" /></td>
+              <td><strong>Exposição ao sol:</strong> {receita.sol}</td>
+            </tr>
+            <tr>
+              <td>📋</td>
+              <td><strong>Instruções detalhadas:</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style={{ backgroundColor: '#f1f1f1', padding: '1rem', borderRadius: '10px', marginTop: '10px' }}>
           <p>{receita.instrucoes}</p>
         </div>
       </div>
@@ -100,11 +138,18 @@ function ReceitaDetalhe() {
 
         {isModerador && (
           <>
-            <button className="btn-aprovar" onClick={() => atualizarStatus('aprovado')}>✅ Aprovar</button>
-            <button className="btn-rejeitar" onClick={() => atualizarStatus('rejeitado')}>❌ Rejeitar</button>
+            {receita.status !== 'aprovado' && (
+              <button className="btn-aprovar" onClick={() => atualizarStatus('aprovado')}>✅ Aprovar</button>
+            )}
+            {receita.status === 'aprovado' ? (
+              <button className="btn-rejeitar" onClick={() => atualizarStatus('rejeitado')}>❌ Excluir</button>
+            ) : (
+              <button className="btn-rejeitar" onClick={() => atualizarStatus('rejeitado')}>❌ Rejeitar</button>
+            )}
           </>
         )}
       </div>
+
     </div>
   );
 }

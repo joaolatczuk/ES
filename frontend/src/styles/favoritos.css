@@ -1,0 +1,11 @@
+.estrela-favorito {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+}
+
+.icone-estrela {
+  width: 48px;
+  height: 48px;
+}
