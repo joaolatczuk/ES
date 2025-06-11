@@ -18,7 +18,6 @@ function Conteudo() {
   const tipoUsuario = user?.role;
 
   const [menuAberto, setMenuAberto] = useState(false);
-  const [notificacoes, setNotificacoes] = useState([]);
   const [receitas, setReceitas] = useState([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [filtro, setFiltro] = useState('');
@@ -83,12 +82,13 @@ function Conteudo() {
   return (
     <div className="conteudo-wrapper">
       <div className="top-bar">
-        <Topo centralizado comMenu onMenuClick={() => setMenuAberto(!menuAberto)} />
+        <Topo centralizado comMenu/>
         {menuAberto && (
           <div className="menu-lateral">
             <button onClick={deslogar}>Sair</button>
           </div>
         )}
+
       </div>
 
       <div className="conteudo-centralizado">

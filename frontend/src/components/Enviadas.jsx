@@ -14,16 +14,19 @@ function Enviadas({ receitas, idUsuario }) {
     }
   };
 
+  const receitasFiltradas = receitas.filter(
+    r =>
+      r.id_autor == idUsuario &&
+      r.statusAtivo !== 0 &&
+      r.status !== 'rejeitado'
+  );
+
   return (
     <div className="receita-lista">
-      {receitas
-        .filter(
-          r =>
-            r.id_autor == idUsuario &&
-            r.statusAtivo !== 0 &&
-            r.status !== 'rejeitado'
-        )
-        .map(r => (
+      {receitasFiltradas.length === 0 ? (
+        <p className="mensagem-vazia">Você ainda não enviou nenhuma receita.</p>
+      ) : (
+        receitasFiltradas.map(r => (
           <div key={r.id || r.id_conteudo} className="receita-card simples">
             <img
               src={`http://localhost:5000${r.imagens?.[0] || '/uploads/no-image.png'}`}
@@ -32,6 +35,7 @@ function Enviadas({ receitas, idUsuario }) {
               onError={e => e.target.src = 'http://localhost:5000/uploads/no-image.png'}
             />
             <h3>{r.nomePlanta}</h3>
+
             {r.status === 'pendente' && (
               <>
                 <p className="aguardando">⏳ Aguardando moderação</p>
@@ -45,9 +49,10 @@ function Enviadas({ receitas, idUsuario }) {
                 </div>
               </>
             )}
+
             {r.status === 'aprovado' && (
               <>
-                <p className="texto-aprovado">✅ <em>Aprovado</em></p>
+                <p className="texto-aprovado">✅ Aprovado</p>
                 <div className="botoes-receita">
                   <button
                     className="btn-acao btn-ver"
@@ -65,7 +70,8 @@ function Enviadas({ receitas, idUsuario }) {
               </>
             )}
           </div>
-        ))}
+        ))
+      )}
     </div>
   );
 }

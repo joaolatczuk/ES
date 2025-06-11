@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import '../styles/login.css';
 import '../styles/style.css';
-import '../styles/style.css';
-import '../styles/style.css';
-
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -14,8 +12,8 @@ function Login() {
 
   // Redireciona automaticamente se já estiver logado
   useEffect(() => {
-    const logado = localStorage.getItem('usuarioLogado');
-    if (logado === 'true') {
+    const user = localStorage.getItem('user');
+    if (user) {
       navigate('/home');
     }
   }, [navigate]);
@@ -32,7 +30,6 @@ function Login() {
       if (resposta.data.success) {
         const { id, nome, tipo } = resposta.data.usuario;
 
-        localStorage.setItem('usuarioLogado', 'true');
         localStorage.setItem('user', JSON.stringify({
           id,
           nome,
@@ -41,8 +38,7 @@ function Login() {
 
         setMensagem('Login realizado com sucesso!');
         navigate('/home');
-      }
-      else {
+      } else {
         setMensagem('Email ou senha incorretos.');
       }
     } catch (erro) {
@@ -85,7 +81,6 @@ function Login() {
         />
 
         <button type="submit" className="input-verde">Fazer login</button>
-
       </form>
 
       {mensagem && <p className="mensagem">{mensagem}</p>}

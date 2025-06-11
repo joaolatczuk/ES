@@ -35,7 +35,7 @@ function ReceitaDetalhe() {
 
   return (
     <div className="receita-detalhe-container">
-      <Topo centralizado comMenu onMenuClick={() => setMenuAberto(!menuAberto)} />
+      <Topo centralizado comMenu/>
       {menuAberto && (
         <div className="menu-lateral">
           <button onClick={() => navigate('/')}>Início</button>
@@ -43,9 +43,10 @@ function ReceitaDetalhe() {
         </div>
       )}
 
+
       <div style={{ marginTop: '0px' }}>
-        <h1 className="receita-titulo" style={{ marginTop: '20px' }}>
-          🌿 {receita.nomePlanta}
+        <h1 className="receita-titulo" style={{ marginTop: '5%' }}>
+          {receita.nomePlanta}
         </h1>
       </div>
 

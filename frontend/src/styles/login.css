@@ -1,0 +1,80 @@
+.cadastro-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  padding: 20px;
+}
+
+.logo {
+  width: 80px;
+  margin-bottom: 10px;
+}
+
+.titulo {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #22543d; /* Verde escuro mais elegante */
+}
+
+.formulario {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input-verde {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e1f7e7;  /* Verde menta claro */
+  color: #22543d;             /* Verde escuro para texto */
+  font-size: 16px;
+}
+
+.input-verde::placeholder {
+  color: #5cae8b; /* Verde claro mais legível */
+}
+
+button.input-verde {
+  background-color: #37966f;  /* Verde médio principal */
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+button.input-verde:hover {
+  background-color: #2b7a5b;  /* Verde mais escuro no hover */
+}
+
+.mensagem {
+  margin-top: 10px;
+  color: red;
+  font-size: 14px;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.cadastro-container a {
+  margin-top: 15px;
+  color: #37966f; /* cor do botão para manter identidade */
+  text-decoration: none;
+}
+
+.cadastro-container a:hover {
+  text-decoration: underline;
+}

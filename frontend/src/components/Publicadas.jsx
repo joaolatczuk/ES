@@ -4,11 +4,15 @@ import { useNavigate } from 'react-router-dom';
 function Publicadas({ receitas }) {
   const navigate = useNavigate();
 
+  // Filtra somente as receitas aprovadas
+  const receitasAprovadas = receitas.filter(r => r.status === 'aprovado');
+
   return (
     <div className="receita-lista">
-      {receitas
-        .filter(r => r.status === 'aprovado')
-        .map(r => {
+      {receitasAprovadas.length === 0 ? (
+        <p className="mensagem-vazia">Nenhuma receita publicada ainda.</p>
+      ) : (
+        receitasAprovadas.map(r => {
           const dataFormatada = new Date(r.data_publicacao).toLocaleDateString('pt-BR');
           return (
             <div key={r.id || r.id_conteudo} className="receita-card simples">
@@ -34,7 +38,8 @@ function Publicadas({ receitas }) {
               </button>
             </div>
           );
-        })}
+        })
+      )}
     </div>
   );
 }

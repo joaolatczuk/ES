@@ -84,8 +84,8 @@ CREATE TABLE IF NOT EXISTS `conteudos` (
 
 -- Copiando dados para a tabela agroplanner.conteudos: ~7 rows (aproximadamente)
 INSERT IGNORE INTO `conteudos` (`id`, `nomePlanta`, `temperatura`, `rega`, `instrucoes`, `id_autor`, `id_categoria`, `id_epoca`, `id_solo`, `id_sol`, `data_publicacao`, `status`, `statusAtivo`) VALUES
-	(1, '123', '3', '4 semana', '123', 1, 3, 4, 2, 1, '2025-06-07 16:35:53', 'aprovado', 1),
-	(2, '123', '6', '5 semana', '123', 1, 2, 1, 3, 2, '2025-06-07 16:58:31', 'aprovado', 1),
+	(1, '123', '3', '4 semana', '123', 1, 3, 4, 2, 1, '2025-06-07 16:35:53', 'aprovado', 0),
+	(2, '123', '6', '5 semana', '123', 1, 2, 1, 3, 2, '2025-06-07 16:58:31', 'rejeitado', 1),
 	(3, '123', '5', '4 dia', '123', 1, 2, 2, 2, 2, '2025-06-07 17:00:31', 'aprovado', 1),
 	(4, '123', '8', '8 dia', '123', 1, 1, 1, 1, 4, '2025-06-08 11:54:51', 'aprovado', 1),
 	(5, '123', '22', '7 semana', '3312ljhpiahpauPIUHPI', 1, 2, 2, 4, 3, '2025-06-08 11:55:26', 'aprovado', 1),
@@ -126,6 +126,24 @@ INSERT IGNORE INTO `conteudosolo` (`id`, `nome`) VALUES
 	(7, 'Alagado'),
 	(8, 'Mistura de solo (composto)');
 
+-- Copiando estrutura para tabela agroplanner.favoritos
+CREATE TABLE IF NOT EXISTS `favoritos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_usuario` int(11) NOT NULL,
+  `id_conteudo` int(11) NOT NULL,
+  `statusAtivo` tinyint(4) DEFAULT 1,
+  `data_favorito` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `id_usuario` (`id_usuario`),
+  KEY `id_conteudo` (`id_conteudo`),
+  CONSTRAINT `favoritos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `favoritos_ibfk_2` FOREIGN KEY (`id_conteudo`) REFERENCES `conteudos` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Copiando dados para a tabela agroplanner.favoritos: ~1 rows (aproximadamente)
+INSERT IGNORE INTO `favoritos` (`id`, `id_usuario`, `id_conteudo`, `statusAtivo`, `data_favorito`) VALUES
+	(1, 1, 2, 1, '2025-06-10 23:51:47');
+
 -- Copiando estrutura para tabela agroplanner.imagens_conteudo
 CREATE TABLE IF NOT EXISTS `imagens_conteudo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -136,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `imagens_conteudo` (
   CONSTRAINT `imagens_conteudo_ibfk_1` FOREIGN KEY (`id_conteudo`) REFERENCES `conteudos` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela agroplanner.imagens_conteudo: ~1 rows (aproximadamente)
+-- Copiando dados para a tabela agroplanner.imagens_conteudo: ~2 rows (aproximadamente)
 INSERT IGNORE INTO `imagens_conteudo` (`id`, `id_conteudo`, `url`) VALUES
 	(3, 9, '/uploads/1749521748939-vecteezy_gradient-paper-cut-style-background-with-gray-colours_26562701.png');
 

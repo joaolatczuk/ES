@@ -23,6 +23,13 @@ body {
   min-height: 100vh;
 }
 
+.mensagem-vazia {
+  text-align: center;
+  font-size: 18px;
+  color: #6c757d;
+  margin-top: 20px;
+}
+
 .logo {
   width: 80px;
   margin-top: 10px;
@@ -72,7 +79,7 @@ textarea {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #d6f0c4;
+  background-color: #e1f7e7;
   font-size: 1rem;
   font-family: 'Poppins', sans-serif;
   color: #2d6a4f;
@@ -96,7 +103,7 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .input-verde {
-  background-color: #d6f0c4;
+  background-color: #e1f7e7;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;

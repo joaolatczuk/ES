@@ -3,7 +3,7 @@
   align-items: center;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #d6f0c4;
+  background-color: #e1f7e7;
   overflow: hidden;
   height: 45px;
   width: 100%;
@@ -57,7 +57,7 @@
   text-align: center;
   font-size: 1rem;
   border: 1px solid #ccc;
-  background-color: #d6f0c4;
+  background-color: #e1f7e7;
   color: #2d6a4f;
   height: 45px;
   border-radius: 8px;
@@ -67,7 +67,7 @@
 .input-numero-unidade select {
   flex: 1;
   height: 45px;
-  background-color: #d6f0c4;
+  background-color: #e1f7e7;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 1rem;
@@ -80,12 +80,12 @@
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  background-color: #d6f0c4;
+  background-color: #e1f7e7;
   height: 45px;
 }
 
 .select-unidade {
-  background-color: #d6f0c4;
+  background-color: #e1f7e7;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 8px;

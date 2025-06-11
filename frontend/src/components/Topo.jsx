@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/style.css';
 
-function Topo({ comMenu, comNotificacoes, notificacoes = [], onSair }) {
+function Topo({ comMenu }) {
   const [menuAberto, setMenuAberto] = useState(false);
   const navigate = useNavigate();
 
@@ -11,6 +11,11 @@ function Topo({ comMenu, comNotificacoes, notificacoes = [], onSair }) {
   const irPara = (rota) => {
     navigate(rota);
     setMenuAberto(false);
+  };
+
+  const sair = () => {
+    localStorage.removeItem('user'); // ou sessionStorage
+    navigate('/');
   };
 
   return (
@@ -30,7 +35,7 @@ function Topo({ comMenu, comNotificacoes, notificacoes = [], onSair }) {
               <button onClick={() => irPara('/forum')}>Fórum</button>
               <button onClick={() => irPara('/calendario')}>Calendário</button>
               <button onClick={() => irPara('/conteudo')}>Conteúdo</button>
-              <button onClick={onSair}>Sair</button>
+              <button onClick={sair}>Sair</button>
             </div>
           )}
         </div>

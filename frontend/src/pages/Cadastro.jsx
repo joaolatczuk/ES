@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/style.css';
+import '../styles/cadastro.css'; // Ou login.css, se estiver reaproveitando o mesmo
 
 function Cadastro() {
   const [nome, setNome] = useState('');
@@ -28,7 +28,6 @@ function Cadastro() {
 
       setMensagem(resposta.data.message);
 
-      // Redirecionar após 2 segundos
       setTimeout(() => {
         navigate('/');
       }, 2000);
@@ -58,6 +57,8 @@ function Cadastro() {
           placeholder="Digite seu nome"
           value={nome}
           onChange={(e) => setNome(e.target.value)}
+          className="input-verde"
+          required
         />
 
         <label htmlFor="senha">Senha:</label>
@@ -67,6 +68,8 @@ function Cadastro() {
           placeholder="Digite sua senha"
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
+          className="input-verde"
+          required
         />
 
         <label htmlFor="confirmarSenha">Digite novamente:</label>
@@ -76,6 +79,8 @@ function Cadastro() {
           placeholder="Digite sua senha"
           value={confirmarSenha}
           onChange={(e) => setConfirmarSenha(e.target.value)}
+          className="input-verde"
+          required
         />
 
         <label htmlFor="email">Digite seu e-mail:</label>
@@ -85,9 +90,11 @@ function Cadastro() {
           placeholder="Digite seu e-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="input-verde"
+          required
         />
 
-        <button type="submit">Criar minha conta</button>
+        <button type="submit" className="input-verde">Criar minha conta</button>
       </form>
 
       {mensagem && <p className="mensagem">{mensagem}</p>}
