@@ -9,6 +9,7 @@ function ReceitaDetalhe() {
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
   const [receita, setReceita] = useState(null);
+  const [favoritado, setFavoritado] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user'));
   const idUsuario = user?.id;
@@ -19,6 +20,50 @@ function ReceitaDetalhe() {
       .then(res => setReceita(res.data))
       .catch(err => console.error('Erro ao buscar receita:', err));
   }, [id]);
+
+  useEffect(() => {
+    if (idUsuario) {
+      axios.get(`http://localhost:5000/api/favoritos/${idUsuario}/${id}`)
+        .then(res => {
+          const favorito = res.data;
+          setFavoritado(favorito?.statusAtivo === 1);
+        })
+        .catch(err => console.error('Erro ao verificar favorito:', err));
+    }
+  }, [id, idUsuario]);
+
+  const toggleFavorito = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/favoritos/${idUsuario}/${id}`);
+      const favorito = response.data;
+
+      if (!favorito) {
+        await axios.post(`http://localhost:5000/api/favoritos`, {
+          id_usuario: idUsuario,
+          id_conteudo: id,
+          statusAtivo: 1
+        });
+        setFavoritado(true);
+      } else {
+        if (favorito.statusAtivo === 1) {
+          await axios.put(`http://localhost:5000/api/favoritos/remover`, {
+            id_usuario: idUsuario,
+            id_conteudo: id
+          });
+          setFavoritado(false);
+        } else {
+          await axios.post(`http://localhost:5000/api/favoritos`, {
+            id_usuario: idUsuario,
+            id_conteudo: id,
+            statusAtivo: 1
+          });
+          setFavoritado(true);
+        }
+      }
+    } catch (err) {
+      console.error('Erro ao atualizar favorito:', err);
+    }
+  };
 
   const atualizarStatus = async (status) => {
     try {
@@ -35,7 +80,7 @@ function ReceitaDetalhe() {
 
   return (
     <div className="receita-detalhe-container">
-      <Topo centralizado comMenu/>
+      <Topo centralizado comMenu />
       {menuAberto && (
         <div className="menu-lateral">
           <button onClick={() => navigate('/')}>Início</button>
@@ -43,8 +88,19 @@ function ReceitaDetalhe() {
         </div>
       )}
 
+      <div
+        className="favorito-botao"
+        onClick={toggleFavorito}
+        title={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+      >
+        <img
+          src={favoritado ? '/heart.png' : '/broken-heart.png'}
+          alt="Favorito"
+          width="40"
+        />
+      </div>
 
-      <div style={{ marginTop: '0px' }}>
+      <div>
         <h1 className="receita-titulo" style={{ marginTop: '5%' }}>
           {receita.nomePlanta}
         </h1>
@@ -108,9 +164,9 @@ function ReceitaDetalhe() {
                 <img
                   src={
                     receita.rega?.toLowerCase().includes('dia') ? '/gota/3.png' :
-                      receita.rega?.toLowerCase().includes('semana') ? '/gota/2.png' :
-                        receita.rega?.toLowerCase().includes('mês') || receita.rega?.toLowerCase().includes('mes') ? '/gota/1.png' :
-                          '/gota/1.png'
+                    receita.rega?.toLowerCase().includes('semana') ? '/gota/2.png' :
+                    receita.rega?.toLowerCase().includes('mês') || receita.rega?.toLowerCase().includes('mes') ? '/gota/1.png' :
+                    '/gota/1.png'
                   }
                   alt="Frequência de rega"
                   width="30"
@@ -129,7 +185,7 @@ function ReceitaDetalhe() {
           </tbody>
         </table>
 
-        <div style={{ backgroundColor: '#f1f1f1', padding: '1rem', borderRadius: '10px', marginTop: '10px' }}>
+        <div className="receita-instrucoes">
           <p>{receita.instrucoes}</p>
         </div>
       </div>
@@ -150,7 +206,6 @@ function ReceitaDetalhe() {
           </>
         )}
       </div>
-
     </div>
   );
 }

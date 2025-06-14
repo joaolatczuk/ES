@@ -31,7 +31,7 @@ router.post('/', upload.array('imagens'), async (req, res) => {
       nomePlanta, id_categoria, id_epoca, temperatura,
       id_solo, rega, id_sol, instrucoes, id_autor, data_publicacao
     ];
-    
+
     const [insertResult] = await db.query(sql, valores);
     const id_conteudo = insertResult.insertId;
 

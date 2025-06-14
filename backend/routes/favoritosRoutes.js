@@ -1,8 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../dbFunctions/db.js'); // ajuste o caminho se necessário
+const db = require('../dbFunctions/db.js');
 
-// 🔍 Buscar todos os favoritos de um usuário (com autor e imagem)
+// 🔍 Verificar se uma receita específica está favoritada
+router.get('/:idUsuario/:idConteudo', async (req, res) => {
+  const { idUsuario, idConteudo } = req.params;
+
+  try {
+    const [favorito] = await db.query(`
+      SELECT * FROM favoritos 
+      WHERE id_usuario = ? AND id_conteudo = ?
+    `, [idUsuario, idConteudo]);
+
+    res.json(favorito.length > 0 ? favorito[0] : null);
+  } catch (err) {
+    console.error('Erro ao buscar favorito:', err);
+    res.status(500).send('Erro ao buscar favorito');
+  }
+});
+
+// 🔍 Buscar todos os favoritos de um usuário
 router.get('/:idUsuario', async (req, res) => {
   const { idUsuario } = req.params;
 
@@ -29,7 +46,7 @@ router.get('/:idUsuario', async (req, res) => {
   }
 });
 
-// ✅ Adicionar um favorito
+// ✅ Adicionar ou ativar favorito
 router.post('/', async (req, res) => {
   const { id_usuario, id_conteudo } = req.body;
   try {
@@ -55,7 +72,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ❌ Remover (desativar) um favorito
+// ❌ Desativar favorito
 router.put('/remover', async (req, res) => {
   const { id_usuario, id_conteudo } = req.body;
   try {
