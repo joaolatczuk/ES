@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 function Moderacao() {
   const [receitas, setReceitas] = useState([]);
@@ -9,30 +10,66 @@ function Moderacao() {
   useEffect(() => {
     axios.get('http://localhost:5000/api/conteudos/pendentes')
       .then(res => setReceitas(res.data))
-      .catch(err => console.error('Erro ao buscar receitas pendentes:', err));
+      .catch(err => {
+        console.error('Erro ao buscar receitas pendentes:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Erro!',
+          text: 'Não foi possível carregar as receitas pendentes.',
+        });
+      });
   }, []);
 
   const atualizarStatus = async (id, status) => {
     try {
       await axios.put(`http://localhost:5000/api/conteudos/${id}/status`, { status });
-      navigate('/conteudo'); // redireciona após ação
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Sucesso!',
+        text: `Status atualizado para "${status}" com sucesso!`,
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      setTimeout(() => navigate('/conteudo'), 1600);
     } catch (err) {
       console.error('Erro ao atualizar status:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro!',
+        text: 'Não foi possível atualizar o status.',
+      });
     }
   };
 
   const excluirReceita = async (id) => {
     try {
       await axios.put(`http://localhost:5000/api/conteudos/${id}/excluir`);
-      navigate('/conteudo'); // redireciona após exclusão
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Sucesso!',
+        text: 'Receita excluída com sucesso!',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      setTimeout(() => navigate('/conteudo'), 1600);
     } catch (err) {
       console.error('Erro ao excluir receita:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro!',
+        text: 'Não foi possível excluir a receita.',
+      });
     }
   };
 
   return (
     <div className="moderacao-container">
       <h2>📋 Receitas pendentes de moderação</h2>
+
       <div className="receita-lista">
         {receitas.length === 0 ? (
           <p>Nenhuma receita pendente.</p>
