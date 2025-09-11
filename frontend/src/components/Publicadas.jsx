@@ -1,10 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import BotaoAcao from './BotaoAcao';
 
 function Publicadas({ receitas }) {
   const navigate = useNavigate();
-
-  // Filtra somente as receitas aprovadas
   const receitasAprovadas = receitas.filter(r => r.status === 'aprovado');
 
   return (
@@ -20,22 +19,16 @@ function Publicadas({ receitas }) {
                 src={`http://localhost:5000${r.imagens?.[0] || '/uploads/no-image.png'}`}
                 alt={r.nomePlanta}
                 className="receita-imagem"
-                onError={e => {
-                  e.target.onerror = null;
-                  e.target.src = 'http://localhost:5000/uploads/no-image.png';
-                }}
+                onError={e => e.target.src = 'http://localhost:5000/uploads/no-image.png'}
               />
-
               <h3>{r.nomePlanta}</h3>
               <p><strong>Autor:</strong> {r.autor || 'Anônimo'}</p>
               <p><strong>Publicado em:</strong> {dataFormatada}</p>
-
-              <button
-                className="btn-ver"
+              <BotaoAcao
+                label="Ver receita"
+                tipo="ver"
                 onClick={() => navigate(`/receita/${r.id || r.id_conteudo}`)}
-              >
-                Ver receita
-              </button>
+              />
             </div>
           );
         })

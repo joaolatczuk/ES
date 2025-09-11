@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import BotaoAcao from './BotaoAcao';
 
 function Enviadas({ receitas, idUsuario }) {
   const navigate = useNavigate();
@@ -40,12 +41,11 @@ function Enviadas({ receitas, idUsuario }) {
               <>
                 <p className="aguardando">⏳ Aguardando moderação</p>
                 <div className="botoes-receita">
-                  <button
-                    className="btn-acao btn-excluir"
+                  <BotaoAcao
+                    label="Excluir"
+                    tipo="excluir"
                     onClick={() => excluirReceita(r.id || r.id_conteudo)}
-                  >
-                    Excluir
-                  </button>
+                  />
                 </div>
               </>
             )}
@@ -53,19 +53,17 @@ function Enviadas({ receitas, idUsuario }) {
             {r.status === 'aprovado' && (
               <>
                 <p className="texto-aprovado">✅ Aprovado</p>
-                <div className="botoes-receita">
-                  <button
-                    className="btn-acao btn-ver"
+                <div className="botoes-receita flex gap-2">
+                  <BotaoAcao
+                    label="Ver"
+                    tipo="ver"
                     onClick={() => navigate(`/receita/${r.id || r.id_conteudo}`)}
-                  >
-                    Ver
-                  </button>
-                  <button
-                    className="btn-acao btn-excluir"
+                  />
+                  <BotaoAcao
+                    label="Excluir"
+                    tipo="excluir"
                     onClick={() => excluirReceita(r.id || r.id_conteudo)}
-                  >
-                    Excluir
-                  </button>
+                  />
                 </div>
               </>
             )}

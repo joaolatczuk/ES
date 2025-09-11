@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import BotaoAcao from './BotaoAcao';
 
 function Favoritas() {
   const [favoritos, setFavoritos] = useState([]);
-
-  // Obtém o usuário do localStorage
   const user = JSON.parse(localStorage.getItem('user'));
   const idUsuario = user?.id;
 
-  // Carrega os favoritos do usuário
   useEffect(() => {
     if (!idUsuario) return;
-
     carregarFavoritos();
   }, [idUsuario]);
 
@@ -27,7 +24,7 @@ function Favoritas() {
         id_usuario: idUsuario,
         id_conteudo
       });
-      carregarFavoritos(); // Atualiza após remover
+      carregarFavoritos();
     } catch (err) {
       console.error('Erro ao remover favorito:', err);
     }
@@ -52,13 +49,18 @@ function Favoritas() {
           <h3>{r.nomePlanta}</h3>
           <p><strong>Autor:</strong> {r.autor || 'Anônimo'}</p>
 
-          <button className="btn-ver" onClick={() => window.location.href = `/receita/${r.id}`}>
-            Ver receita
-          </button>
-
-          <button className="btn-remover" onClick={() => removerFavorito(r.id)}>
-            Remover dos favoritos
-          </button>
+          <div className="botoes-receita flex gap-2">
+            <BotaoAcao
+              label="Ver receita"
+              tipo="ver"
+              onClick={() => window.location.href = `/receita/${r.id}`}
+            />
+            <BotaoAcao
+              label="Remover"
+              tipo="remover"
+              onClick={() => removerFavorito(r.id)}
+            />
+          </div>
         </div>
       ))}
     </div>
