@@ -1,74 +1,229 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import BotaoAcao from './BotaoAcao';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Swal from "sweetalert2";
+import BotaoAcao from "./BotaoAcao";
 
-function Enviadas({ receitas, idUsuario }) {
+function Enviadas({ receitas, setReceitas }) {
   const navigate = useNavigate();
+
+  const styles = {
+    enviadasContainer: {
+      padding: "20px",
+      backgroundColor: "#f3f6f9",
+      minHeight: "100vh",
+      fontFamily: "Arial, sans-serif",
+    },
+    receitaListaGrid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+      gap: "20px",
+      justifyContent: "center",
+      maxWidth: "1200px",
+      margin: "0 auto",
+    },
+    receitaCard: {
+      backgroundColor: "#fff",
+      borderRadius: "12px",
+      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+      overflow: "hidden",
+      display: "flex",
+      flexDirection: "column",
+      minHeight: "400px",
+    },
+    receitaImagemContainer: {
+      width: "100%",
+      height: "180px",
+      overflow: "hidden",
+      backgroundColor: "#2d6a4f",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 0,
+      flexDirection: "column",
+      color: "#fff",
+      fontWeight: 600,
+      textAlign: "center",
+    },
+    receitaImagem: {
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+    },
+    noImageIcon: {
+      width: "40px",
+      height: "40px",
+      marginBottom: "10px",
+    },
+    receitaInfo: {
+      padding: "15px",
+      flexGrow: 1,
+      display: "flex",
+      flexDirection: "column",
+    },
+    receitaId: {
+      fontSize: "0.85rem",
+      color: "#a0a0a0",
+      marginBottom: "5px",
+    },
+    receitaNome: {
+      fontSize: "1.1rem",
+      fontWeight: 700,
+      color: "#333",
+      margin: "0 0 10px 0",
+      lineHeight: "1.3",
+    },
+    receitaStatus: {
+      fontSize: "0.9rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      margin: "0 0 15px 0",
+    },
+    statusPendente: {
+      color: "#666",
+    },
+    statusAprovado: {
+      color: "green",
+    },
+    infoIcon: {
+      width: "16px",
+      height: "16px",
+    },
+    botoesContainer: {
+      padding: "0 15px 15px",
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "8px",
+      justifyContent: "center",
+      marginTop: "auto",
+    },
+    mensagemVazia: {
+      backgroundColor: "#fff",
+      borderRadius: "12px",
+      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+      padding: "40px 20px",
+      textAlign: "center",
+      maxWidth: "600px",
+      margin: "80px auto",
+      fontSize: "1.2rem",
+      color: "#777",
+    },
+  };
 
   const excluirReceita = async (id) => {
     try {
       await axios.put(`http://localhost:5000/api/conteudos/${id}/excluir`);
-      window.location.reload();
+      setReceitas((prev) => prev.filter((r) => (r.id || r.id_conteudo) !== id));
+      Swal.fire({
+        icon: "success",
+        title: "Excluído!",
+        text: "A receita foi excluída com sucesso.",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
-      console.error('Erro ao excluir receita:', err);
+      console.error("Erro ao excluir receita:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Erro!",
+        text: "Não foi possível excluir a receita.",
+      });
     }
   };
 
-  const receitasFiltradas = receitas.filter(
-    r =>
-      r.id_autor == idUsuario &&
-      r.statusAtivo !== 0 &&
-      r.status !== 'rejeitado'
-  );
+  const receitasEnviadas = (receitas || []).filter((r) => r.statusAtivo === 1);
 
   return (
-    <div className="receita-lista">
-      {receitasFiltradas.length === 0 ? (
-        <p className="mensagem-vazia">Você ainda não enviou nenhuma receita.</p>
+    <div style={styles.enviadasContainer}>
+      {receitasEnviadas.length === 0 ? (
+        <div style={styles.mensagemVazia}>
+          Nenhuma receita enviada encontrada.
+        </div>
       ) : (
-        receitasFiltradas.map(r => (
-          <div key={r.id || r.id_conteudo} className="receita-card simples">
-            <img
-              src={`http://localhost:5000${r.imagens?.[0] || '/uploads/no-image.png'}`}
-              alt={r.nomePlanta}
-              className="receita-imagem"
-              onError={e => e.target.src = 'http://localhost:5000/uploads/no-image.png'}
-            />
-            <h3>{r.nomePlanta}</h3>
+        <div style={styles.receitaListaGrid}>
+          {receitasEnviadas.map((r) => {
+            const id = r.id || r.id_conteudo;
+            const imagemSrc = r.imagens?.[0]
+              ? `http://localhost:5000${r.imagens[0]}`
+              : null;
 
-            {r.status === 'pendente' && (
-              <>
-                <p className="aguardando">⏳ Aguardando moderação</p>
-                <div className="botoes-receita">
-                  <BotaoAcao
-                    label="Excluir"
-                    tipo="excluir"
-                    onClick={() => excluirReceita(r.id || r.id_conteudo)}
-                  />
+            return (
+              <div key={id} style={styles.receitaCard}>
+                <div style={styles.receitaImagemContainer}>
+                  {imagemSrc ? (
+                    <img
+                      src={imagemSrc}
+                      alt={r.nomePlanta}
+                      style={styles.receitaImagem}
+                    />
+                  ) : (
+                    <>
+                      <img
+                        src="/interrogacao.png"
+                        alt="Sem imagem"
+                        style={styles.noImageIcon}
+                      />
+                      <p>Sem Imagem</p>
+                    </>
+                  )}
                 </div>
-              </>
-            )}
 
-            {r.status === 'aprovado' && (
-              <>
-                <p className="texto-aprovado">✅ Aprovado</p>
-                <div className="botoes-receita flex gap-2">
-                  <BotaoAcao
-                    label="Ver"
-                    tipo="ver"
-                    onClick={() => navigate(`/receita/${r.id || r.id_conteudo}`)}
-                  />
-                  <BotaoAcao
-                    label="Excluir"
-                    tipo="excluir"
-                    onClick={() => excluirReceita(r.id || r.id_conteudo)}
-                  />
+                <div style={styles.receitaInfo}>
+                  <div style={styles.receitaId}>ID: {id}</div>
+                  <h3 style={styles.receitaNome}>{r.nomePlanta}</h3>
+
+                  {r.status === "pendente" && (
+                    <p style={{ ...styles.receitaStatus, ...styles.statusPendente }}>
+                      <img
+                        src="/hourglass.png"
+                        alt="Ícone de relógio de areia"
+                        style={styles.infoIcon}
+                      />
+                      Aguardando moderação
+                    </p>
+                  )}
+
+                  {r.status === "aprovado" && (
+                    <p style={{ ...styles.receitaStatus, ...styles.statusAprovado }}>
+                      <img
+                        src="/check.png"
+                        alt="Ícone de aprovado"
+                        style={styles.infoIcon}
+                      />
+                      Aprovado
+                    </p>
+                  )}
                 </div>
-              </>
-            )}
-          </div>
-        ))
+
+                <div style={styles.botoesContainer}>
+                  {r.status === "pendente" && (
+                    <BotaoAcao
+                      label="Excluir"
+                      tipo="excluir"
+                      onClick={() => excluirReceita(id)}
+                    />
+                  )}
+
+                  {r.status === "aprovado" && (
+                    <>
+                      <BotaoAcao
+                        label="Ver"
+                        tipo="ver"
+                        onClick={() => navigate(`/receita/${id}`)}
+                      />
+                      <BotaoAcao
+                        label="Excluir"
+                        tipo="excluir"
+                        onClick={() => excluirReceita(id)}
+                      />
+                    </>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );

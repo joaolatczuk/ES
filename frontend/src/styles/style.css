@@ -1,26 +1,11 @@
-@import './formulario.css';
-@import './moderador.css';
-@import './receita.css';
-@import './menu.css';
-@import './botoes.css';
-@import './botoes-superiores.css';
-@import './notificacoes.css';
-@import './topbar.css';
-@import './input-componentes.css';
-@import './home.css';
-@import './detalhe.css';
-@import './favoritos.css';
-
 body {
   margin: 0;
   padding: 0;
   font-family: 'Poppins', sans-serif;
   background-color: #ffffff;
   color: #2d6a4f;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  /* Removido display: flex e min-height 100vh do body
+     para permitir que o conteúdo role normalmente e o filtro fique fixo */
 }
 
 .mensagem-vazia {
@@ -79,7 +64,7 @@ textarea {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: #e1f7e7;
+  background-color: #ffffff;
   font-size: 1rem;
   font-family: 'Poppins', sans-serif;
   color: #2d6a4f;
@@ -102,18 +87,6 @@ input[type="file"]::file-selector-button:hover {
   background-color: #173628;
 }
 
-.input-verde {
-  background-color: #e1f7e7;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 1rem;
-  color: #2d6a4f;
-  width: 100%;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-
 .conteudo-centralizado {
   display: flex;
   flex-direction: column;
@@ -130,4 +103,98 @@ input[type="file"]::file-selector-button:hover {
   cursor: pointer;
   font-weight: bold;
   margin-bottom: 30px;
+}
+
+.filtro-data {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filtro-data select {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.filtros {
+  background: #f8f8f8;
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+}
+
+.filtro-item {
+  margin-bottom: 8px;
+}
+
+.filtro-item label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+/* -- ALTERAÇÕES PARA O FILTRO FIXO E ALINHAMENTO -- */
+
+/* Container da página com o filtro */
+.enviadas-container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  /* Removido padding-top aqui, será ajustado pelo filtro */
+  /* Adicionado min-height para garantir que o container se estenda */
+  min-height: calc(100vh - 80px); /* Exemplo: 80px para o topbar */
+  padding-top: 80px; /* Ajusta o conteúdo abaixo do topbar */
+}
+
+/* Coluna do filtro: fixa na lateral */
+.filtros-col {
+  flex: 0 0 250px; /* Largura fixa */
+  position: fixed;
+  top: 75px; /* Ajuste para começar abaixo do menu superior */
+  left: 0;
+  width: 350px; /* Garantir que a largura seja mantida */
+  /* Ajuste de height: agora será dinâmico ou fixo com base no layout desejado */
+  /* Para alinhar com o fundo da lista de receitas, precisaríamos de JS ou de um container flex que envolva tudo */
+  /* Por enquanto, vamos manter um valor alto ou 100% da área disponível após o topbar */
+  height: calc(100vh - 80px); /* Ocupa o resto da altura da viewport */
+  overflow-y: auto; /* Adiciona scroll se o conteúdo do filtro for grande */
+  background-color: #fff; /* Fundo branco para se destacar */
+  box-shadow: 2px 0 5px rgba(0,0,0,0.0); /* Sombra sutil */
+  padding: 20px;
+  box-sizing: border-box; /* Inclui padding na largura/altura */
+  border-bottom: 1px solid #ccc; /* Linha inferior, como na imagem */
+  overflow-x: hidden;
+}
+
+/* Lista de receitas: ajusta o layout para o filtro fixo */
+.receita-lista {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  /* A linha vermelha da lista de receitas virá do container principal */
+}
+
+/* Garante que o body não atrapalhe o posicionamento fixo */
+html, body {
+  height: 100%;
+}
+body {
+  display: block; /* Anula o display: flex original do body */
+}
+
+/* Opcional: Se houver um topbar fixo, adicione este CSS para ele */
+.topbar { /* ou o nome da sua classe do topbar */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px; /* Exemplo da altura do seu topbar */
+  background-color: #f0f0f0; /* Cor de fundo do seu topbar */
+  z-index: 1000; /* Garante que o topbar fique acima de outros elementos */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }

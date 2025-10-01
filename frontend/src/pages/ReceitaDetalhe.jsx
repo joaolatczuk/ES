@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Topo from '../components/Topo';
+import Swal from 'sweetalert2';
+import Topo from '../components/Topo'; // 🔔 Import do Topo
+import BotaoAcao from '../components/BotaoAcao';
 import '../styles/style.css';
 
 function ReceitaDetalhe() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [menuAberto, setMenuAberto] = useState(false);
   const [receita, setReceita] = useState(null);
   const [favoritado, setFavoritado] = useState(false);
 
@@ -68,9 +69,24 @@ function ReceitaDetalhe() {
   const atualizarStatus = async (status) => {
     try {
       await axios.put(`http://localhost:5000/api/conteudos/${id}/status`, { status });
-      navigate('/moderacao');
+
+      Swal.fire({
+        icon: 'success',
+        title: `Receita ${status === 'aprovado' ? 'aprovada' : 'rejeitada'} com sucesso!`,
+        showConfirmButton: false,
+        timer: 1500
+      });
+
+      setTimeout(() => {
+        navigate('/conteudo');
+      }, 1600);
     } catch (err) {
       console.error('Erro ao atualizar status:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro ao atualizar status',
+        text: 'Tente novamente mais tarde.'
+      });
     }
   };
 
@@ -79,132 +95,244 @@ function ReceitaDetalhe() {
   const dataFormatada = new Date(receita.data_publicacao).toLocaleDateString('pt-BR');
 
   return (
-    <div className="receita-detalhe-container">
-      <Topo centralizado comMenu />
-      {menuAberto && (
-        <div className="menu-lateral">
-          <button onClick={() => navigate('/')}>Início</button>
-          <button onClick={() => localStorage.clear() || navigate('/')}>Sair</button>
+    <div style={{
+      backgroundColor: '#f5f5f5',
+      minHeight: '100vh',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      {/* 🔝 Topo fixo */}
+      <div style={{
+        backgroundColor: '#fff',
+        padding: '10px 20px',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000
+      }}>
+        <Topo centralizado comMenu />
+      </div>
+
+      {/* 📌 Card centralizado */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        padding: '40px 20px'
+      }}>
+        <div style={{
+          width: '100%',
+          maxWidth: '800px',
+          backgroundColor: '#fff',
+          borderRadius: '16px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          overflow: 'hidden',
+          fontFamily: 'sans-serif'
+        }}>
+          {/* Top Header Section */}
+          <div style={{
+            position: 'relative',
+            backgroundColor: '#2d6a4f',
+            padding: '20px',
+            color: '#fff',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            borderRadius: '16px 16px 0 0'
+          }}>
+            {/* Favorite Button */}
+            <div
+              onClick={toggleFavorito}
+              title={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '20px',
+                cursor: 'pointer',
+                zIndex: 10
+              }}
+            >
+              <img
+                src={favoritado ? '/heart.png' : '/broken-heart.png'}
+                alt="Favorito"
+                width="40"
+              />
+            </div>
+
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
+              gap: '20px'
+            }}>
+              {/* Plant Image */}
+              <div style={{
+                width: '120px',
+                height: '120px',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#2d6a4f',
+                color: '#fff',
+                fontWeight: '600',
+                textAlign: 'center'
+              }}>
+                {receita.imagens?.[0] ? (
+                  <img
+                    src={`http://localhost:5000${receita.imagens[0]}`}
+                    alt={receita.nomePlanta}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <>
+                    <img src="/interrogacao.png" alt="Sem imagem" style={{ width: '40px', height: '40px', marginBottom: '8px' }} />
+                    <p style={{ fontSize: '12px' }}>Sem Imagem</p>
+                  </>
+                )}
+              </div>
+
+              {/* Title and Info */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexGrow: 1 }}>
+                <div style={{ fontSize: '24px', margin: 0, fontWeight: 'bold' }}>{receita.nomePlanta}</div>
+
+                {/* Autor */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <img src="/user.png" alt="Autor" width="20" height="20" />
+                  <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Autor:</span>
+                  <span style={{ fontSize: '16px' }}>{receita.autor || 'João Vinícius Latzcuk'}</span>
+                </div>
+
+                {/* Publicada em */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <img src="/calendar.png" alt="Data de publicação" width="20" height="20" />
+                  <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Publicada em:</span>
+                  <span style={{ fontSize: '16px' }}>{dataFormatada}</span>
+                </div>
+
+                {/* Categoria */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <img src={`/categoria/${receita.id_categoria}.png`} alt="Categoria" width="20" height="20" />
+                  <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Categoria:</span>
+                  <span style={{ fontSize: '16px' }}>{receita.categoria}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Content Sections */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '20px',
+            padding: '20px'
+          }}>
+            {/* Cultivation Conditions */}
+            <div style={{
+              backgroundColor: '#f0fff0',
+              borderRadius: '12px',
+              padding: '20px'
+            }}>
+              <h2 style={{ fontSize: '20px', margin: '0 0 15px 0', color: '#4d985a' }}>
+                <span style={{ marginRight: '10px' }}>🌱</span>
+                Condições de Cultivo
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                }}>
+                  <img src={`/estacao/${receita.id_epoca}.png`} alt="Época" width="30" />
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#555' }}>Época de plantio</span>
+                    <span style={{ fontSize: '16px' }}>{receita.epoca}</span>
+                  </div>
+                </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                }}>
+                  <img src={Number(receita.temperatura) < 20 ? '/frio.png' : '/quente.png'} alt="Temperatura" width="30" />
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#555' }}>Temperatura ideal</span>
+                    <span style={{ fontSize: '16px' }}>{receita.temperatura}°C</span>
+                  </div>
+                </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                }}>
+                  <img src={`/solo/${receita.id_solo}.png`} alt="Solo" width="30" />
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#555' }}>Solo</span>
+                    <span style={{ fontSize: '16px' }}>{receita.solo}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Care Section */}
+            <div style={{
+              backgroundColor: '#f0fff0',
+              borderRadius: '12px',
+              padding: '20px'
+            }}>
+              <h2 style={{ fontSize: '20px', margin: '0 0 15px 0', color: '#4d985a' }}>
+                <span style={{ marginRight: '10px' }}>💧</span>
+                Cuidados
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                }}>
+                  <img src={receita.rega?.toLowerCase().includes('dia') ? '/gota/3.png' : receita.rega?.toLowerCase().includes('semana') ? '/gota/2.png' : '/gota/1.png'} alt="Frequência de rega" width="30" />
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#555' }}>Frequência de rega</span>
+                    <span style={{ fontSize: '16px' }}>{receita.rega}</span>
+                  </div>
+                </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                }}>
+                  <img src={`/sol/${receita.id_sol}.png`} alt="Sol" width="30" />
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#555' }}>Exposição ao sol</span>
+                    <span style={{ fontSize: '16px' }}>{receita.sol}</span>
+                  </div>
+                </div>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                }}>
+                  <div style={{ fontSize: '24px' }}>📋</div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#555' }}>Instruções detalhadas</span>
+                    {/* ✅ Agora com quebra de linha */}
+                    <span style={{ fontSize: '16px', whiteSpace: 'pre-line' }}>
+                      {receita.instrucoes}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '15px',
+            padding: '20px',
+            borderTop: '1px solid #eee',
+          }}>
+            <BotaoAcao
+              label="Voltar"
+              tipo="padrao"
+              onClick={() => navigate('/conteudo')}
+              style={{ backgroundColor: '#2e66f3' }}
+            />
+          </div>
         </div>
-      )}
-
-      <div
-        className="favorito-botao"
-        onClick={toggleFavorito}
-        title={favoritado ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
-      >
-        <img
-          src={favoritado ? '/heart.png' : '/broken-heart.png'}
-          alt="Favorito"
-          width="40"
-        />
-      </div>
-
-      <div>
-        <h1 className="receita-titulo" style={{ marginTop: '5%' }}>
-          {receita.nomePlanta}
-        </h1>
-      </div>
-
-      {receita.imagens?.length > 0 ? (
-        <img
-          src={`http://localhost:5000${receita.imagens[0]}`}
-          alt={receita.nomePlanta}
-          className="receita-imagem-grande"
-        />
-      ) : (
-        <img
-          src="http://localhost:5000/uploads/no-image.png"
-          alt="Sem imagem"
-          className="receita-imagem-grande"
-        />
-      )}
-
-      <div className="receita-info">
-        <table>
-          <tbody>
-            <tr>
-              <td><img src="/user.png" alt="Autor" width="30" /></td>
-              <td><strong>Autor:</strong> {receita.autor || 'Anônimo'}</td>
-            </tr>
-            <tr>
-              <td>📅</td>
-              <td><strong>Publicada em:</strong> {dataFormatada}</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>
-                <hr style={{ width: '100%', borderTop: '2px solid #2d6a4f' }} />
-              </td>
-            </tr>
-
-            <tr>
-              <td><img src={`/categoria/${receita.id_categoria}.png`} alt="Categoria" width="30" /></td>
-              <td><strong>Categoria:</strong> {receita.categoria}</td>
-            </tr>
-            <tr>
-              <td><img src={`/estacao/${receita.id_epoca}.png`} alt="Época" width="30" /></td>
-              <td><strong>Época de plantio:</strong> {receita.epoca}</td>
-            </tr>
-            <tr>
-              <td>
-                <img
-                  src={Number(receita.temperatura) < 20 ? '/frio.png' : '/quente.png'}
-                  alt="Temperatura"
-                  width="30"
-                />
-              </td>
-              <td><strong>Temperatura ideal:</strong> {receita.temperatura}°C</td>
-            </tr>
-            <tr>
-              <td><img src={`/solo/${receita.id_solo}.png`} alt="Solo" width="30" /></td>
-              <td><strong>Solo:</strong> {receita.solo}</td>
-            </tr>
-            <tr>
-              <td>
-                <img
-                  src={
-                    receita.rega?.toLowerCase().includes('dia') ? '/gota/3.png' :
-                    receita.rega?.toLowerCase().includes('semana') ? '/gota/2.png' :
-                    receita.rega?.toLowerCase().includes('mês') || receita.rega?.toLowerCase().includes('mes') ? '/gota/1.png' :
-                    '/gota/1.png'
-                  }
-                  alt="Frequência de rega"
-                  width="30"
-                />
-              </td>
-              <td><strong>Frequência de rega:</strong> {receita.rega}</td>
-            </tr>
-            <tr>
-              <td><img src={`/sol/${receita.id_sol}.png`} alt="Sol" width="30" /></td>
-              <td><strong>Exposição ao sol:</strong> {receita.sol}</td>
-            </tr>
-            <tr>
-              <td>📋</td>
-              <td><strong>Instruções detalhadas:</strong></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div className="receita-instrucoes">
-          <p>{receita.instrucoes}</p>
-        </div>
-      </div>
-
-      <div className="botoes-aprovacao">
-        <button className="btn-voltar-especial" onClick={() => navigate(-1)}>← Voltar</button>
-
-        {isModerador && (
-          <>
-            {receita.status !== 'aprovado' && (
-              <button className="btn-aprovar" onClick={() => atualizarStatus('aprovado')}>✅ Aprovar</button>
-            )}
-            {receita.status === 'aprovado' ? (
-              <button className="btn-rejeitar" onClick={() => atualizarStatus('rejeitado')}>❌ Excluir</button>
-            ) : (
-              <button className="btn-rejeitar" onClick={() => atualizarStatus('rejeitado')}>❌ Rejeitar</button>
-            )}
-          </>
-        )}
       </div>
     </div>
   );

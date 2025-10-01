@@ -11,7 +11,11 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// 🔹 Criar nova receita com imagens
+/* ===========================
+    CRUD de Conteúdos
+=========================== */
+
+// 🔹 Criar novo conteúdo com imagens
 router.post('/', upload.array('imagens'), async (req, res) => {
   try {
     const {
@@ -35,6 +39,7 @@ router.post('/', upload.array('imagens'), async (req, res) => {
     const [insertResult] = await db.query(sql, valores);
     const id_conteudo = insertResult.insertId;
 
+    // Salvar imagens se houver
     if (req.files && req.files.length > 0) {
       const imagensSql = `INSERT INTO imagens_conteudo (id_conteudo, url) VALUES ?`;
       const imagensValores = req.files.map(file => [id_conteudo, `/uploads/${file.filename}`]);
@@ -47,7 +52,7 @@ router.post('/', upload.array('imagens'), async (req, res) => {
   }
 });
 
-// 🔸 Listar receitas pendentes
+// 🔸 Listar conteúdos pendentes
 router.get('/pendentes', async (req, res) => {
   try {
     const [results] = await db.query(`
@@ -66,18 +71,46 @@ router.get('/pendentes', async (req, res) => {
   }
 });
 
-// 🔹 Listar todas as receitas visíveis (exceto excluídas)
+// 🔹 Listar todos os conteúdos com filtros (exceto rejeitados e excluídos)
 router.get('/', async (req, res) => {
   try {
-    const [results] = await db.query(`
+    const { status, id_categoria, id_epoca, id_solo, id_sol } = req.query;
+
+    let sql = `
       SELECT c.*, u.nome AS autor, GROUP_CONCAT(i.url) AS imagens
       FROM conteudos c
       LEFT JOIN imagens_conteudo i ON c.id = i.id_conteudo
       LEFT JOIN usuarios u ON c.id_autor = u.id
       WHERE c.statusAtivo != 0 AND c.status != 'rejeitado'
-      GROUP BY c.id
-      ORDER BY c.data_publicacao DESC
-    `);
+    `;
+    const params = [];
+
+    // Adicionar cláusulas WHERE baseadas nos filtros recebidos
+    if (status) {
+      sql += ` AND c.status = ?`;
+      params.push(status);
+    }
+    if (id_categoria) {
+      sql += ` AND c.id_categoria = ?`;
+      params.push(id_categoria);
+    }
+    if (id_epoca) {
+      sql += ` AND c.id_epoca = ?`;
+      params.push(id_epoca);
+    }
+    if (id_solo) {
+      sql += ` AND c.id_solo = ?`;
+      params.push(id_solo);
+    }
+    if (id_sol) {
+      sql += ` AND c.id_sol = ?`;
+      params.push(id_sol);
+    }
+
+    sql += ` GROUP BY c.id ORDER BY c.data_publicacao DESC`;
+
+    const [results] = await db.query(sql, params);
+
     results.forEach(r => r.imagens = r.imagens ? r.imagens.split(',') : []);
     res.json(results);
   } catch (err) {
@@ -85,18 +118,18 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 🔸 Atualizar statusAtivo (exclusão lógica)
+// 🔸 Exclusão lógica
 router.put('/:id/excluir', async (req, res) => {
   const { id } = req.params;
   try {
     await db.query('UPDATE conteudos SET statusAtivo = 0 WHERE id = ?', [id]);
-    res.json({ sucesso: true, mensagem: 'Receita marcada como excluída.' });
+    res.json({ sucesso: true, mensagem: 'Conteúdo marcado como excluído.' });
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }
 });
 
-// 🔸 Atualizar status da receita (aprovado ou rejeitado)
+// 🔸 Atualizar status (aprovado/rejeitado)
 router.put('/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -114,7 +147,7 @@ router.put('/:id/status', async (req, res) => {
   }
 });
 
-// 🔍 Buscar receita por ID com joins nos nomes das FK
+// 🔍 Buscar por ID
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -139,18 +172,18 @@ router.get('/:id', async (req, res) => {
     `, [id]);
 
     if (results.length === 0) {
-      return res.status(404).json({ erro: 'Receita não encontrada' });
+      return res.status(404).json({ erro: 'Conteúdo não encontrado' });
     }
 
-    const receita = results[0];
-    receita.imagens = receita.imagens ? receita.imagens.split(',') : [];
-    res.json(receita);
+    const conteudo = results[0];
+    conteudo.imagens = conteudo.imagens ? conteudo.imagens.split(',') : [];
+    res.json(conteudo);
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }
 });
 
-// 🔴 Excluir permanentemente receita e imagens
+// 🔴 Exclusão permanente
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -158,13 +191,92 @@ router.delete('/:id', async (req, res) => {
     const [result] = await db.query('DELETE FROM conteudos WHERE id = ?', [id]);
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ erro: 'Receita não encontrada.' });
+      return res.status(404).json({ erro: 'Conteúdo não encontrado.' });
     }
 
-    res.json({ sucesso: true, mensagem: 'Receita excluída permanentemente.' });
+    res.json({ sucesso: true, mensagem: 'Conteúdo excluído permanentemente.' });
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }
+});
+
+/* ===========================
+    Listas auxiliares (para filtros)
+=========================== */
+// 🔹 Categorias
+router.get('/categorias', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM conteudocategoria');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+});
+
+// 🔹 Épocas
+router.get('/epocas', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM conteudoepoca');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+});
+
+// 🔹 Solos
+router.get('/solos', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM conteudosolo');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+});
+
+// 🔹 Tipo de Sol
+router.get('/sol', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM conteudosol');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+});
+
+router.get('/favoritos/contagem/:id_usuario', (req, res) => {
+  const { id_usuario } = req.params;
+
+  // Query SQL para contar os favoritos ativos do usuário
+  const sql = 'SELECT COUNT(*) AS totalFavoritos FROM favoritos WHERE id_usuario = ? AND statusAtivo = 1';
+  
+  db.query(sql, [id_usuario], (err, result) => {
+      if (err) {
+          console.error('Erro ao consultar o banco de dados:', err);
+          return res.status(500).json({ error: 'Erro interno do servidor' });
+      }
+      
+      // Retorna o resultado da contagem
+      const totalFavoritos = result[0].totalFavoritos;
+      res.status(200).json({ totalFavoritos });
+  });
+});
+
+router.get('/conteudos/contagem/:id_autor', (req, res) => {
+  const { id_autor } = req.params;
+
+  // Query SQL para contar os conteúdos aprovados e ativos
+  const sql = 'SELECT COUNT(*) AS totalPostagens FROM conteudos WHERE id_autor = ? AND statusAprovado = 1 AND statusAtivo = 1';
+  
+  db.query(sql, [id_autor], (err, result) => {
+      if (err) {
+          console.error('Erro ao consultar o banco de dados:', err);
+          return res.status(500).json({ error: 'Erro interno do servidor' });
+      }
+      
+      // Retorna o resultado da contagem
+      const totalPostagens = result[0].totalPostagens;
+      res.status(200).json({ totalPostagens });
+  });
 });
 
 module.exports = router;
