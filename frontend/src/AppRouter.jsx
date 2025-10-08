@@ -24,7 +24,6 @@ function AppRouter() {
         <Route path="/conteudo" element={<PrivateRoute><Conteudo /></PrivateRoute>} />
         <Route path="/receita/:id" element={<PrivateRoute><ReceitaDetalhe /></PrivateRoute>} />
         <Route path="/perfil" element={<PrivateRoute><Perfil /></PrivateRoute>} /> {/* Nova rota adicionada aqui */}
-
         {/* Rota protegida apenas para administradores */}
         <Route path="/moderacao" element={<PrivateRoute role="admin"><Moderacao /></PrivateRoute>} />
       </Routes>

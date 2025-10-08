@@ -40,6 +40,24 @@ router.get('/conteudosol', async (req, res) => {
   }
 });
 
+router.get("/filtros", async (req, res) => {
+  try {
+    const [categorias] = await db.query("SELECT id, nome FROM conteudocategoria ORDER BY id");
+    const [epocas]     = await db.query("SELECT id, nome FROM conteudoepoca ORDER BY id");
+    const [solos]      = await db.query("SELECT id, nome FROM conteudosolo ORDER BY id");
+    const [sois]       = await db.query("SELECT id, nome FROM conteudosol ORDER BY id");
+
+    res.json({
+      categorias,
+      epocas,
+      solos,
+      sois
+    });
+  } catch (error) {
+    console.error("Erro ao buscar filtros:", error);
+    res.status(500).json({ error: "Erro ao buscar filtros" });
+  }
+});
 
 
 module.exports = router;

@@ -147,6 +147,29 @@ router.put('/:id/status', async (req, res) => {
   }
 });
 
+router.get('/contagem/:idUsuario', async (req, res) => {
+  try {
+    const idUsuario = parseInt(req.params.idUsuario, 10);
+    if (Number.isNaN(idUsuario)) {
+      return res.status(400).json({ error: 'idUsuario inválido' });
+    }
+
+    const [rows] = await db.query(
+      `SELECT COUNT(*) AS totalPostagens
+         FROM conteudos
+        WHERE id_autor = ?
+          AND status = 'aprovado'
+          AND statusAtivo = 1`,
+      [idUsuario]
+    );
+
+    res.json({ totalPostagens: rows?.[0]?.totalPostagens || 0 });
+  } catch (err) {
+    console.error('Erro contagem postagens:', err);
+    res.status(500).json({ error: 'Erro ao buscar postagens' });
+  }
+});
+
 // 🔍 Buscar por ID
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
@@ -277,6 +300,33 @@ router.get('/conteudos/contagem/:id_autor', (req, res) => {
       const totalPostagens = result[0].totalPostagens;
       res.status(200).json({ totalPostagens });
   });
+});
+
+// 🔹 Última postagem do autor (apenas aprovadas e ativas)
+// GET /api/conteudos/ultimo/:id_autor
+router.get('/ultimo/:id_autor', async (req, res) => {
+  const { id_autor } = req.params;
+  try {
+    const [rows] = await db.query(
+      `SELECT c.id, c.nomePlanta, c.data_publicacao
+         FROM conteudos c
+        WHERE c.id_autor = ?
+          AND c.statusAtivo = 1
+          AND c.status = 'aprovado'
+        ORDER BY c.data_publicacao DESC
+        LIMIT 1`,
+      [id_autor]
+    );
+
+    if (!rows.length) {
+      return res.json(null); // sem postagem
+    }
+
+    return res.json(rows[0]);
+  } catch (err) {
+    console.error('Erro ao buscar última postagem:', err);
+    res.status(500).json({ error: 'Erro ao buscar última postagem' });
+  }
 });
 
 module.exports = router;

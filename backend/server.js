@@ -1,3 +1,4 @@
+// backend/server.js
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -8,35 +9,39 @@ const userRoutes = require('./routes/userRoutes');
 const conteudoRoutes = require('./routes/conteudoRoutes');
 const opcoesRoutes = require('./routes/opcoesRoutes');
 const favoritosRoutes = require('./routes/favoritosRoutes');
+const avisosRoutes = require('./routes/avisosRoutes');
 
-// 👇 Habilita CORS antes de tudo
+// CORS
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }));
 
-// 👇 Permite JSON no corpo da requisição
+// JSON body
 app.use(express.json());
 
-// ✅ Content Security Policy deve vir ANTES das rotas
+// CSP (libera imagens do próprio servidor + data/blob)
 app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; img-src 'self' data: http://localhost:5000"
+    "default-src 'self'; img-src 'self' data: blob: http://localhost:5000"
   );
   next();
 });
 
-// 👇 Suas rotas
+// arquivos públicos de upload
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// rotas
 app.use('/api/conteudos', conteudoRoutes);
 app.use('/api/users', userRoutes);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // imagens públicas
 app.use('/api', opcoesRoutes);
 app.use('/api/favoritos', favoritosRoutes);
+app.use('/api/avisos', avisosRoutes);
 
-// Start do servidor
-app.listen(process.env.PORT, () => {
-  console.clear()
-  console.log(`Servidor rodando na porta ${process.env.PORT}`);
+// start
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.clear();
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
-

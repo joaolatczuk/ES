@@ -101,6 +101,8 @@ function Topo({ comMenu }) {
             <button style={styles.menuButton} onClick={() => irPara('/home')}>Início</button>
             <button style={styles.menuButton} onClick={() => irPara('/calendario')}>Calendário</button>
             <button style={styles.menuButton} onClick={() => irPara('/conteudo')}>Conteúdo</button>
+            {/* ✅ Novo item do menu */}
+            <button style={styles.menuButton} onClick={() => irPara('/perfil')}>Perfil</button>
             <button style={styles.menuButton} onClick={sair}>Sair</button>
           </div>
         </>

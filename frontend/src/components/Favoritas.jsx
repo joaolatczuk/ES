@@ -60,10 +60,9 @@ function Favoritas() {
       <div className="grid">
         {favoritosAtivos.map((r) => {
           const id = r.id || r.id_conteudo;
-          const imagemSrc = r.imagens
-            ? `http://localhost:5000${r.imagens.split(",")[0]}`
-            : "/interrogacao.png";
-
+          const imagemSrc = r.imagens && r.imagens.length > 0
+          ? `http://localhost:5000${Array.isArray(r.imagens) ? r.imagens[0] : r.imagens.split(",")[0]}`
+          : "/interrogacao.png";
           return (
             <div key={id} className="card">
               {/* Imagem */}
