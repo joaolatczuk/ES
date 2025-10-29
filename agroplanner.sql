@@ -14,6 +14,123 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+-- Copiando estrutura para tabela agroplanner.atividades_realizadas
+CREATE TABLE IF NOT EXISTS `atividades_realizadas` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_usuario` int(11) NOT NULL,
+  `id_favorito` int(11) NOT NULL,
+  `data_atividade` date NOT NULL,
+  `criado_em` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_user_fav_day` (`id_usuario`,`id_favorito`,`data_atividade`),
+  KEY `idx_ar_usuario` (`id_usuario`),
+  KEY `idx_ar_favorito` (`id_favorito`),
+  CONSTRAINT `fk_ar_favorito` FOREIGN KEY (`id_favorito`) REFERENCES `favoritos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_ar_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Exportação de dados foi desmarcado.
+
+-- Copiando estrutura para tabela agroplanner.conteudocategoria
+CREATE TABLE IF NOT EXISTS `conteudocategoria` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `url` longtext DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Exportação de dados foi desmarcado.
+
+-- Copiando estrutura para tabela agroplanner.conteudoepoca
+CREATE TABLE IF NOT EXISTS `conteudoepoca` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `url` longtext DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Exportação de dados foi desmarcado.
+
+-- Copiando estrutura para tabela agroplanner.conteudos
+CREATE TABLE IF NOT EXISTS `conteudos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nomePlanta` varchar(100) NOT NULL,
+  `temperatura` varchar(20) DEFAULT NULL,
+  `rega` varchar(50) DEFAULT NULL,
+  `instrucoes` text NOT NULL,
+  `id_autor` int(11) NOT NULL,
+  `id_categoria` int(11) DEFAULT NULL,
+  `id_epoca` int(11) DEFAULT NULL,
+  `id_solo` int(11) DEFAULT NULL,
+  `id_sol` int(11) DEFAULT NULL,
+  `data_publicacao` datetime DEFAULT current_timestamp(),
+  `status` varchar(20) DEFAULT 'pendente',
+  `statusAtivo` tinyint(4) DEFAULT 1,
+  PRIMARY KEY (`id`),
+  KEY `id_autor` (`id_autor`),
+  KEY `id_categoria` (`id_categoria`),
+  KEY `id_epoca` (`id_epoca`),
+  KEY `id_solo` (`id_solo`),
+  KEY `id_sol` (`id_sol`),
+  CONSTRAINT `conteudos_ibfk_1` FOREIGN KEY (`id_autor`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `conteudos_ibfk_2` FOREIGN KEY (`id_categoria`) REFERENCES `conteudocategoria` (`id`),
+  CONSTRAINT `conteudos_ibfk_3` FOREIGN KEY (`id_epoca`) REFERENCES `conteudoepoca` (`id`),
+  CONSTRAINT `conteudos_ibfk_4` FOREIGN KEY (`id_solo`) REFERENCES `conteudosolo` (`id`),
+  CONSTRAINT `conteudos_ibfk_5` FOREIGN KEY (`id_sol`) REFERENCES `conteudosol` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Exportação de dados foi desmarcado.
+
+-- Copiando estrutura para tabela agroplanner.conteudosol
+CREATE TABLE IF NOT EXISTS `conteudosol` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `observacao` text DEFAULT NULL,
+  `url` longtext DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Exportação de dados foi desmarcado.
+
+-- Copiando estrutura para tabela agroplanner.conteudosolo
+CREATE TABLE IF NOT EXISTS `conteudosolo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `observacao` text DEFAULT NULL,
+  `url` longtext DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Exportação de dados foi desmarcado.
+
+-- Copiando estrutura para tabela agroplanner.favoritos
+CREATE TABLE IF NOT EXISTS `favoritos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_usuario` int(11) NOT NULL,
+  `id_conteudo` int(11) NOT NULL,
+  `statusAtivo` tinyint(4) DEFAULT 1,
+  `data_favorito` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `id_usuario` (`id_usuario`),
+  KEY `id_conteudo` (`id_conteudo`),
+  CONSTRAINT `favoritos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `favoritos_ibfk_2` FOREIGN KEY (`id_conteudo`) REFERENCES `conteudos` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Exportação de dados foi desmarcado.
+
+-- Copiando estrutura para tabela agroplanner.imagens_conteudo
+CREATE TABLE IF NOT EXISTS `imagens_conteudo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_conteudo` int(11) NOT NULL,
+  `url` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_conteudo` (`id_conteudo`),
+  CONSTRAINT `imagens_conteudo_ibfk_1` FOREIGN KEY (`id_conteudo`) REFERENCES `conteudos` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Exportação de dados foi desmarcado.
+
 -- Copiando estrutura para tabela agroplanner.usuarios
 CREATE TABLE IF NOT EXISTS `usuarios` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -33,7 +150,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `foto_perfil` longtext DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Exportação de dados foi desmarcado.
 
