@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import Topo from '../components/Topo'; // 🔔 Import do Topo
+import Topo from '../components/Topo';
 import BotaoAcao from '../components/BotaoAcao';
 import '../styles/style.css';
 
@@ -103,7 +103,6 @@ function ReceitaDetalhe() {
       {/* 🔝 Topo fixo */}
       <div style={{
         backgroundColor: '#fff',
-        padding: '10px 20px',
         boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
         display: 'flex',
         justifyContent: 'space-between',
@@ -184,7 +183,7 @@ function ReceitaDetalhe() {
               }}>
                 {receita.imagens?.[0] ? (
                   <img
-                    src={`http://localhost:5000${receita.imagens[0]}`}
+                    src={receita.imagens[0]}
                     alt={receita.nomePlanta}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
@@ -204,7 +203,7 @@ function ReceitaDetalhe() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <img src="/user.png" alt="Autor" width="20" height="20" />
                   <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Autor:</span>
-                  <span style={{ fontSize: '16px' }}>{receita.autor || 'João Vinícius Latzcuk'}</span>
+                  <span style={{ fontSize: '16px' }}>{receita.autor}</span>
                 </div>
 
                 {/* Publicada em */}
@@ -214,9 +213,11 @@ function ReceitaDetalhe() {
                   <span style={{ fontSize: '16px' }}>{dataFormatada}</span>
                 </div>
 
-                {/* Categoria */}
+                {/* Categoria (agora do backend) */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <img src={`/categoria/${receita.id_categoria}.png`} alt="Categoria" width="20" height="20" />
+                  {receita.categoria_icon && (
+                    <img src={receita.categoria_icon} alt="Categoria" width="20" height="20" />
+                  )}
                   <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Categoria:</span>
                   <span style={{ fontSize: '16px' }}>{receita.categoria}</span>
                 </div>
@@ -242,17 +243,22 @@ function ReceitaDetalhe() {
                 Condições de Cultivo
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                {/* Época (do backend) */}
                 <div style={{
-                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px',
+                  borderRadius: '8px', border: '1px solid #e0e0e0'
                 }}>
-                  <img src={`/estacao/${receita.id_epoca}.png`} alt="Época" width="30" />
+                  {receita.epoca_icon && <img src={receita.epoca_icon} alt="Época" width="30" />}
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#555' }}>Época de plantio</span>
                     <span style={{ fontSize: '16px' }}>{receita.epoca}</span>
                   </div>
                 </div>
+
+                {/* Temperatura */}
                 <div style={{
-                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px',
+                  borderRadius: '8px', border: '1px solid #e0e0e0'
                 }}>
                   <img src={Number(receita.temperatura) < 20 ? '/frio.png' : '/quente.png'} alt="Temperatura" width="30" />
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -260,10 +266,13 @@ function ReceitaDetalhe() {
                     <span style={{ fontSize: '16px' }}>{receita.temperatura}°C</span>
                   </div>
                 </div>
+
+                {/* Solo (do backend) */}
                 <div style={{
-                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px',
+                  borderRadius: '8px', border: '1px solid #e0e0e0'
                 }}>
-                  <img src={`/solo/${receita.id_solo}.png`} alt="Solo" width="30" />
+                  {receita.solo_icon && <img src={receita.solo_icon} alt="Solo" width="30" />}
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#555' }}>Solo</span>
                     <span style={{ fontSize: '16px' }}>{receita.solo}</span>
@@ -283,8 +292,10 @@ function ReceitaDetalhe() {
                 Cuidados
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                {/* Rega */}
                 <div style={{
-                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px',
+                  borderRadius: '8px', border: '1px solid #e0e0e0'
                 }}>
                   <img src={receita.rega?.toLowerCase().includes('dia') ? '/gota/3.png' : receita.rega?.toLowerCase().includes('semana') ? '/gota/2.png' : '/gota/1.png'} alt="Frequência de rega" width="30" />
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -292,22 +303,27 @@ function ReceitaDetalhe() {
                     <span style={{ fontSize: '16px' }}>{receita.rega}</span>
                   </div>
                 </div>
+
+                {/* Sol (do backend) */}
                 <div style={{
-                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px',
+                  borderRadius: '8px', border: '1px solid #e0e0e0'
                 }}>
-                  <img src={`/sol/${receita.id_sol}.png`} alt="Sol" width="30" />
+                  {receita.sol_icon && <img src={receita.sol_icon} alt="Sol" width="30" />}
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#555' }}>Exposição ao sol</span>
                     <span style={{ fontSize: '16px' }}>{receita.sol}</span>
                   </div>
                 </div>
+
+                {/* Instruções */}
                 <div style={{
-                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e0e0e0'
+                  display: 'flex', alignItems: 'center', gap: '15px', backgroundColor: '#fff', padding: '10px',
+                  borderRadius: '8px', border: '1px solid #e0e0e0'
                 }}>
                   <div style={{ fontSize: '24px' }}>📋</div>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#555' }}>Instruções detalhadas</span>
-                    {/* ✅ Agora com quebra de linha */}
                     <span style={{ fontSize: '16px', whiteSpace: 'pre-line' }}>
                       {receita.instrucoes}
                     </span>

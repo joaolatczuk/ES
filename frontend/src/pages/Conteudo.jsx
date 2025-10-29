@@ -34,7 +34,6 @@ function Conteudo() {
     },
     topBar: {
       backgroundColor: '#fff',
-      padding: '10px 20px',
       boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
       display: 'flex',
       justifyContent: 'space-between',
@@ -42,8 +41,8 @@ function Conteudo() {
       position: 'sticky',
       top: 0,
       zIndex: 1000,
-      borderBottom: 'none', // Garante que não haja borda inferior aqui
-      borderTop: 'none',    // Garante que não haja borda superior aqui
+      borderBottom: 'none',
+      borderTop: 'none',
     },
     menuLateral: {
       position: 'fixed',
@@ -99,6 +98,9 @@ function Conteudo() {
       padding: '20px',
       backgroundColor: '#f3f6f9',
     },
+    contentMax: { maxWidth: 1120, margin: '20px auto', padding: '10px' },
+    pageWrapper: { backgroundColor: '#f3f6f9', minHeight: '100vh', fontFamily: 'Arial, sans-serif' },
+    
   };
 
   useEffect(() => {
@@ -155,16 +157,16 @@ function Conteudo() {
   };
 
   return (
-    <div style={styles.conteudoWrapper}>
+    <div style={styles.pageWrapper}>
+      {/* TOPO IGUAL AO DE CONTEUDO */}
       <div style={styles.topBar}>
-        <Topo centralizado comMenu />
+        <Topo centralizado comMenu onMenuToggle={() => setMenuAberto(v => !v)} />
         {menuAberto && (
           <div style={styles.menuLateral}>
-            <button onClick={deslogar}>Sair</button>
+            <button onClick={() => { localStorage.clear(); navigate('/'); }}>Sair</button>
           </div>
         )}
       </div>
-
       <div style={styles.conteudoCentralizado}>
         <div style={styles.botoesSuperiores}> {/* Adicionado margin-top aqui */}
           <button style={styles.botao} onClick={() => navigate('/home')}>

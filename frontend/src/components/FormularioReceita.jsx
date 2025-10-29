@@ -99,7 +99,6 @@ function FormularioReceita({ idUsuario, categorias, epocas, solos, exposicoes, o
         }
 
         .section label::before {
-          content: '';
           display: inline-block;
           width: 20px;
           height: 20px;

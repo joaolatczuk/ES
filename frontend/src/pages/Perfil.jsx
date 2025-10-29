@@ -77,9 +77,11 @@ function Perfil() {
   const [confirmaSenha, setConfirmaSenha] = useState('');
   const [erroSenha, setErroSenha] = useState('');
 
+  // TOPO (hambúrguer)
+  const [menuAberto, setMenuAberto] = useState(false);
+
   const navigate = useNavigate();
   const API_BASE = useMemo(() => process.env.REACT_APP_API_BASE || 'http://localhost:5000', []);
-  const fileInputRef = useRef(null);
 
   const resolveImgSrc = (valor) => {
     if (!valor) return `${API_BASE}/uploads/no-image.png`;
@@ -250,6 +252,7 @@ function Perfil() {
   };
 
   // foto
+  const fileInputRef = useRef(null);
   const abrirSeletorFoto = () => fileInputRef.current?.click();
   const aoSelecionarFoto = async (e) => {
     const file = e.target.files?.[0];
@@ -309,8 +312,15 @@ function Perfil() {
 
   return (
     <div style={styles.pagina}>
-      {/* Topo com menu lateral (hambúrguer) */}
-      <Topo centralizado comMenu />
+      {/* ===== TOPO padronizado (barra branca fixa + menu lateral) ===== */}
+      <div style={styles.topBar}>
+        <Topo centralizado comMenu onMenuClick={() => setMenuAberto(v => !v)} />
+        {menuAberto && (
+          <div style={styles.menuLateral}>
+            <button onClick={deslogar} style={styles.botaoSair}>Sair</button>
+          </div>
+        )}
+      </div>
 
       <div style={styles.mainContent}>
         <div style={styles.leftColumn}>
@@ -442,7 +452,43 @@ function Perfil() {
 /* ===== estilos ===== */
 const styles = {
   pagina: { display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f1f1f1' },
-  mainContent: { display: 'flex', flex: 1, padding: '20px', gap: '30px', marginTop: '60px' },
+
+  // TOPO padronizado (igual Conteudo/Calendario)
+  topBar: {
+    backgroundColor: '#fff',
+    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'sticky',
+    top: 0,
+    zIndex: 1000,
+    borderBottom: 'none',
+    borderTop: 'none',
+  },
+  menuLateral: {
+    position: 'fixed',
+    top: '60px',
+    right: '20px',
+    backgroundColor: '#fff',
+    border: '1px solid #ccc',
+    borderRadius: '8px',
+    padding: '10px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    zIndex: 999,
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  botaoSair: {
+    padding: '10px 14px',
+    background: '#d62828',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 6,
+    cursor: 'pointer'
+  },
+
+  mainContent: { display: 'flex', flex: 1, padding: '20px', gap: '30px', marginTop: '10px' },
   leftColumn: { flex: '1', maxWidth: '350px', minWidth: '280px' },
   profileCard: {
     backgroundColor: '#fff', padding: '30px', borderRadius: '15px',
@@ -458,12 +504,11 @@ const styles = {
   },
   tagsContainer: { display: 'flex', gap: '10px', marginBottom: '10px' },
 
-  /* === Botões em degradê (claro / médio / escuro) === */
   // Claro: "Adicionar foto"
   photoButton: {
     width: '100%',
     padding: '10px 20px',
-    backgroundColor: '#95d5b2', // fallback
+    backgroundColor: '#95d5b2',
     color: '#fff',
     border: 'none',
     borderRadius: '10px',
@@ -507,7 +552,7 @@ const styles = {
     transition: 'transform .06s ease, filter .2s ease',
   },
 
-  // Ação destrutiva mantém vermelho
+  // Ação destrutiva
   logoutButton: {
     padding: '10px 20px',
     backgroundColor: '#d62828',
@@ -541,7 +586,6 @@ const styles = {
     border: '1px solid #ddd', fontSize: '1rem', backgroundColor: '#f9f9f9'
   },
 
-  // Botão "Trocar informação" (médio/compacto)
   swapButton: {
     padding: '8px 12px',
     backgroundColor: '#2d6a4f',
@@ -575,6 +619,5 @@ const toast = {
   icon: { fontSize: 22 },
   text: { fontWeight: 600, color: '#2d6a4f' }
 };
-
 
 export default Perfil;

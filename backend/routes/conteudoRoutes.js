@@ -178,18 +178,27 @@ router.get('/:id', async (req, res) => {
       SELECT 
         c.*,
         u.nome AS autor,
+
         cat.nome AS categoria,
-        ep.nome AS epoca,
+        cat.url  AS categoria_icon,   -- 🔹 pega url do ícone da categoria
+
+        ep.nome  AS epoca,
+        ep.url   AS epoca_icon,       -- 🔹 pega url do ícone da época
+
         solo.nome AS solo,
+        solo.url  AS solo_icon,       -- 🔹 pega url do ícone do solo
+
         sol.nome AS sol,
+        sol.url  AS sol_icon,         -- 🔹 pega url do ícone do tipo de sol
+
         GROUP_CONCAT(i.url) AS imagens
       FROM conteudos c
-      LEFT JOIN usuarios u ON c.id_autor = u.id
+      LEFT JOIN usuarios        u    ON c.id_autor    = u.id
       LEFT JOIN conteudocategoria cat ON c.id_categoria = cat.id
-      LEFT JOIN conteudoepoca ep ON c.id_epoca = ep.id
-      LEFT JOIN conteudosolo solo ON c.id_solo = solo.id
-      LEFT JOIN conteudosol sol ON c.id_sol = sol.id
-      LEFT JOIN imagens_conteudo i ON c.id = i.id_conteudo
+      LEFT JOIN conteudoepoca     ep  ON c.id_epoca     = ep.id
+      LEFT JOIN conteudosolo      solo ON c.id_solo      = solo.id
+      LEFT JOIN conteudosol       sol  ON c.id_sol       = sol.id
+      LEFT JOIN imagens_conteudo  i    ON c.id           = i.id_conteudo
       WHERE c.id = ?
       GROUP BY c.id
     `, [id]);
@@ -198,10 +207,21 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ erro: 'Conteúdo não encontrado' });
     }
 
+    const base = 'http://localhost:5000';
+    const addBase = (u) => (u ? (u.startsWith('http') ? u : `${base}${u}`) : null);
+
     const conteudo = results[0];
-    conteudo.imagens = conteudo.imagens ? conteudo.imagens.split(',') : [];
+    conteudo.imagens = conteudo.imagens ? conteudo.imagens.split(',').map(addBase) : [];
+
+    // 🔹 prefixa base nos ícones vindos do BD
+    conteudo.categoria_icon = addBase(conteudo.categoria_icon);
+    conteudo.epoca_icon     = addBase(conteudo.epoca_icon);
+    conteudo.solo_icon      = addBase(conteudo.solo_icon);
+    conteudo.sol_icon       = addBase(conteudo.sol_icon);
+
     res.json(conteudo);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ erro: err.message });
   }
 });

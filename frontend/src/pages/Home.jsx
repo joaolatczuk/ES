@@ -8,6 +8,7 @@ function Home() {
 
   const user = JSON.parse(localStorage.getItem('user'));
   const idUsuario = user?.id;
+  const isAdmin = !!(user?.is_admin || user?.role === 'admin');
 
   const deslogar = () => {
     localStorage.clear();
@@ -31,26 +32,46 @@ function Home() {
 
       <div style={styles.homeContainer}>
         <div style={styles.homeCard}>
-          {/* Cartão de Calendário */}
+          {/* Calendário */}
           <Link to="/calendario" style={styles.homeLink}>
             <img src="/calendar.png" alt="Calendário" style={styles.cardIcon} />
             <h3 style={styles.cardTitle}>Calendário</h3>
             <p style={styles.cardText}>Verifique as datas!!</p>
           </Link>
 
-          {/* Cartão de Conteúdo */}
+          {/* Conteúdo */}
           <Link to="/conteudo" style={styles.homeLink}>
             <img src="/content.png" alt="Conteúdo" style={styles.cardIcon} />
             <h3 style={styles.cardTitle}>Conteúdo</h3>
             <p style={styles.cardText}>Venha ver receitas para você plantar</p>
           </Link>
 
-          {/* NOVO - Cartão de Perfil do Usuário */}
+          {/* Perfil */}
           <Link to="/perfil" style={styles.homeLink}>
-            <img src="/user.png" alt="Perfil do Usuário" style={styles.cardIcon} /> {/* Use um ícone de sua preferência */}
+            <img src="/user.png" alt="Perfil do Usuário" style={styles.cardIcon} />
             <h3 style={styles.cardTitle}>Meu Perfil</h3>
             <p style={styles.cardText}>Altere suas informações</p>
           </Link>
+
+          {/* ADMIN — cartões exclusivos */}
+          {isAdmin && (
+            <>
+              <Link to="/admin/usuarios" style={styles.homeLink}>
+                <img src="/admin.png" alt="Admin" style={styles.cardIcon} />
+                <h3 style={styles.cardTitle}>Administrar Usuários</h3>
+                <p style={styles.cardText}>Gerenciar usuários (bloquear/ativar)</p>
+              </Link>
+
+              {/* ✅ Novo bloco para inclusão de tipos */}
+              <Link to="/moderacaoadicionar" style={styles.homeLink}>
+                <img src="/add.png" alt="Adicionar Itens" style={styles.cardIcon} />
+                <h3 style={styles.cardTitle}>Adicionar Itens</h3>
+                <p style={styles.cardText}>
+                  Gerenciar tipos: solo, sol, época e categoria
+                </p>
+              </Link>
+            </>
+          )}
         </div>
 
         <p style={styles.duvida}>Não encontrou o que gostaria?</p>
@@ -70,12 +91,9 @@ const styles = {
   },
   topBar: {
     position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
+    top: 0, left: 0, right: 0,
     zIndex: 1000,
     backgroundColor: '#fff',
-    padding: '10px 20px',
     boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
     display: 'flex',
     justifyContent: 'center',
@@ -91,7 +109,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    zIndex: '1000',
+    zIndex: 1000,
   },
   botaoSair: {
     marginTop: '20px',
@@ -103,7 +121,7 @@ const styles = {
     cursor: 'pointer',
   },
   homeContainer: {
-    flex: '1',
+    flex: 1,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -131,24 +149,10 @@ const styles = {
     textAlign: 'center',
     transition: 'transform 0.3s, box-shadow 0.3s',
   },
-  cardIcon: {
-    width: '80px',
-    height: '80px',
-    marginBottom: '15px',
-  },
-  cardTitle: {
-    fontSize: '1.5rem',
-    margin: '0',
-    color: '#2d6a4f',
-  },
-  cardText: {
-    fontSize: '0.9rem',
-    color: '#666',
-  },
-  duvida: {
-    fontSize: '1.2rem',
-    color: '#555',
-  },
+  cardIcon: { width: 80, height: 80, marginBottom: 15 },
+  cardTitle: { fontSize: '1.5rem', margin: 0, color: '#2d6a4f' },
+  cardText: { fontSize: '0.9rem', color: '#666' },
+  duvida: { fontSize: '1.2rem', color: '#555' },
   faleConosco: {
     padding: '12px 24px',
     backgroundColor: '#2d6a4f',

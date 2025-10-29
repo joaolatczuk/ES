@@ -1,3 +1,4 @@
+// BotaoAcao.jsx
 import React from "react";
 import Swal from "sweetalert2";
 
@@ -8,12 +9,16 @@ function BotaoAcao({
   icone,
   carregando = false,
   onClick,
+  autoSuccess = true, // 👈 novo: controla o Swal automático
 }) {
   const handleClick = (e) => {
     e.preventDefault();
     if (carregando) return;
-    
+
     onClick?.();
+
+    // só mostra o sucesso automático se habilitado
+    if (!autoSuccess) return;
 
     if (tipo === "ver" || tipo === "voltar" || tipo === "neutro" || carregando) {
       return;
@@ -27,7 +32,6 @@ function BotaoAcao({
     });
   };
 
-  // Mapeamento de estilos para cada tipo de botão
   const estilosPorTipo = {
     info: { backgroundColor: '#2e66f3', color: '#fff' },
     sucesso: { backgroundColor: '#4CAF50', color: '#fff' },
@@ -43,14 +47,12 @@ function BotaoAcao({
     fechar: { backgroundColor: '#f5f5f5', color: '#333', border: '1px solid #ccc' }
   };
 
-  // Mapeamento de estilos para cada tamanho
   const estilosPorTamanho = {
     pequeno: { padding: '6px 12px', fontSize: '0.85rem' },
     padrao: { padding: '10px 20px', fontSize: '1rem' },
     grande: { padding: '14px 28px', fontSize: '1.1rem' }
   };
 
-  // Estilos base
   const estiloBase = {
     fontFamily: 'inherit',
     fontWeight: 500,
@@ -65,7 +67,6 @@ function BotaoAcao({
     textDecoration: 'none'
   };
 
-  // Combina os estilos
   const estilosFinais = {
     ...estiloBase,
     ...estilosPorTipo[tipo],
@@ -74,11 +75,7 @@ function BotaoAcao({
   };
 
   return (
-    <button
-      style={estilosFinais}
-      onClick={handleClick}
-      disabled={carregando}
-    >
+    <button style={estilosFinais} onClick={handleClick} disabled={carregando}>
       {carregando ? (
         <>
           <span style={{

@@ -1,4 +1,3 @@
-// backend/server.js
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -11,16 +10,16 @@ const opcoesRoutes = require('./routes/opcoesRoutes');
 const favoritosRoutes = require('./routes/favoritosRoutes');
 const avisosRoutes = require('./routes/avisosRoutes');
 
-// CORS
+const adminRoutes = require('./routes/adminRoute');
+
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }));
 
-// JSON body
 app.use(express.json());
 
-// CSP (libera imagens do próprio servidor + data/blob)
+// CSP
 app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
@@ -38,6 +37,9 @@ app.use('/api/users', userRoutes);
 app.use('/api', opcoesRoutes);
 app.use('/api/favoritos', favoritosRoutes);
 app.use('/api/avisos', avisosRoutes);
+
+// ⬇️ NOVO prefixo
+app.use('/api/admin', adminRoutes);
 
 // start
 const PORT = process.env.PORT || 5000;
